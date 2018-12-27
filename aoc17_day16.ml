@@ -38,13 +38,11 @@ let rec step a = function
     let p' = String.index a c' in
     step a (Exchange (p, p'))
 
-let eval charset ~pos ~chars =
-  Fixed.explain chars charset |> (* substitute *)
-  Fixed.transform pos (* move *)
-
 
 let () =
   let script = read_moves () in
+  let charset = "abcdefghijklmnop" in
+  Printf.eprintf "naive: %s\n" (List.fold_left step charset script);
   let pos, chars =
     let f m (pos, chars) =
       match m with
@@ -53,26 +51,14 @@ let () =
       | Partner (x, y) ->
         pos, Fixed.Transpose (Char.code x - 97, Char.code y - 97) :: chars
     in
-    let pos, chars = List.fold_right f script ([], []) in
-    Fixed.of_list 16 pos, Fixed.of_list 16 chars
+    List.fold_right f script ([], [])
   in
-  let charset = "abcdefghijklmnop" in
-  Printf.eprintf "naive: %s\n" (List.fold_left step charset script);
-  Printf.eprintf "fast: %s\n" (eval charset ~pos ~chars);
-  let pos' = Fixed.to_disjoint_cycles pos in
-  let chars' = Fixed.to_disjoint_cycles chars in
-  Printf.printf "%a" Dot.header ();
-  List.iter (Printf.printf "%a" Dot.(cycle int)) pos';
-  let letter ch i = Printf.fprintf ch "%c" charset.[i] in
-  List.iter (Printf.printf "%a" Dot.(cycle letter)) chars';
-  Printf.printf "%a" Dot.footer ();
-  match Sys.argv with
-  | [| _ |] -> ()
-  | [| _; n |] ->
-    let n = int_of_string n in
-    let pos = Disjoint_cycles.pow n pos' |> Fixed.of_disjoint_cycles 16 in
-    let chars = Disjoint_cycles.pow n chars' |> Fixed.of_disjoint_cycles 16 in
-    Printf.eprintf "%d: %s\n" n (eval charset ~pos ~chars)
-  | _ ->
-    Printf.eprintf "usage: %s [n]\n" (Sys.argv.(0));
-    exit 1
+  let n =
+    match Sys.argv with
+    | [| _ |] -> 1
+    | [| _; n |] -> int_of_string n
+    | _ ->
+      Printf.eprintf "usage: %s [n]\n" (Sys.argv.(0));
+      exit 1
+  in
+  Explain.dot stdout charset n ~pos ~chars
