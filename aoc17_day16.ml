@@ -68,7 +68,13 @@ let () =
   let letter ch i = Printf.fprintf ch "%c" charset.[i] in
   List.iter (Printf.printf "%a" Dot.(cycle letter)) chars';
   Printf.printf "%a" Dot.footer ();
-  let n = 1_000_000_000 in
-  let pos = Disjoint_cycles.pow n pos' |> Fixed.of_disjoint_cycles 16 in
-  let chars = Disjoint_cycles.pow n chars' |> Fixed.of_disjoint_cycles 16 in
-  Printf.eprintf "%d: %s\n" n (eval charset ~pos ~chars)
+  match Sys.argv with
+  | [| _ |] -> ()
+  | [| _; n |] ->
+    let n = int_of_string n in
+    let pos = Disjoint_cycles.pow n pos' |> Fixed.of_disjoint_cycles 16 in
+    let chars = Disjoint_cycles.pow n chars' |> Fixed.of_disjoint_cycles 16 in
+    Printf.eprintf "%d: %s\n" n (eval charset ~pos ~chars)
+  | _ ->
+    Printf.eprintf "usage: %s [n]\n" (Sys.argv.(0));
+    exit 1
