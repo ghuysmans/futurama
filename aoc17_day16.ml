@@ -5,24 +5,22 @@ type move =
 
 exception Invalid_move of string
 
-let move_of_string s =
-  let open Tyre in
-  let p = regex (Re.rg 'a' 'p') in
-  let re = route [
-    ((start *> char 's' *> int <* stop) --> fun x ->
-      Spin x);
-    ((start *> char 'x' *> int <&> char '/' *> int <* stop) --> fun (a, b) ->
-      Exchange (a, b));
-    ((start *> char 'p' *> p <&> char '/' *> p <* stop) --> fun (p, q) ->
-      Partner (p.[0], q.[0]));
-  ] in
-  match Tyre.exec re s with
-  | Ok x -> x
-  | Error _ -> raise (Invalid_move s)
+let read_move () =
+  match Scanf.scanf "%c" (fun x -> x) with
+  | 's' -> Scanf.scanf "%d" (fun x -> Spin x)
+  | 'x' -> Scanf.scanf "%d/%d" (fun x y -> Exchange (x, y))
+  | 'p' -> Scanf.scanf "%c/%c" (fun x y -> Partner (x, y))
+  | c -> failwith @@ Printf.sprintf "unexpected character %c" c
 
-let moves_of_string s =
-  Re.(split (char ',' |> compile) s) |>
-  List.map move_of_string
+let read_moves () =
+  let rec f acc =
+    Scanf.scanf "%c" (function
+      | ',' -> f (read_move () :: acc)
+      | '\n' -> List.rev acc
+      | _ -> failwith "comma expected"
+    )
+  in
+  f [read_move ()]
 
 let rec step a = function
   | Spin i ->
@@ -46,7 +44,7 @@ let eval charset ~pos ~chars =
 
 
 let () =
-  let script = read_line () |> moves_of_string in
+  let script = read_moves () in
   let pos, chars =
     let f m (pos, chars) =
       match m with
