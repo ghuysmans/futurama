@@ -40,6 +40,10 @@ let rec step a = function
     let p' = String.index a c' in
     step a (Exchange (p, p'))
 
+let eval charset ~pos ~chars =
+  Fixed.explain chars charset |> (* substitute *)
+  Fixed.transform pos (* move *)
+
 
 let () =
   let script = read_line () |> moves_of_string in
@@ -55,10 +59,18 @@ let () =
     Fixed.of_list 16 pos, Fixed.of_list 16 chars
   in
   let charset = "abcdefghijklmnop" in
-  List.fold_left step charset script |> prerr_endline;
-  Fixed.explain chars charset |> Fixed.transform pos |> prerr_endline;
+  Printf.printf "naive: %s\n\n" (List.fold_left step charset script);
+  Printf.printf "fast: %s\n\n" (eval charset ~pos ~chars);
   let pos' = Fixed.to_disjoint_cycles pos in
   let chars' = Fixed.to_disjoint_cycles chars in
-  Printf.printf "pos:\n%a\n" Latex.(list "itemize" (chain int)) pos';
+  Printf.printf "%a" Dot.header ();
+  List.iter (Printf.printf "%a" Dot.(cycle int)) pos';
   let letter ch i = Printf.fprintf ch "%c" (Char.chr (97 + i)) in
+  List.iter (Printf.printf "%a" Dot.(cycle letter)) chars';
+  Printf.printf "%a" Dot.footer ();
+  Printf.printf "pos:\n%a\n" Latex.(list "itemize" (chain int)) pos';
   Printf.printf "chars:\n%a\n" Latex.(list "itemize" (chain letter)) chars';
+  let n = 1_000_000_000 in
+  let pos = Disjoint_cycles.pow n pos' |> Fixed.of_disjoint_cycles 16 in
+  let chars = Disjoint_cycles.pow n chars' |> Fixed.of_disjoint_cycles 16 in
+  Printf.printf "%d: %s\n\n" n (eval charset ~pos ~chars)
