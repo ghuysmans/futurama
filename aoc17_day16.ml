@@ -39,3 +39,26 @@ let rec step a = function
     let p = String.index a c in
     let p' = String.index a c' in
     step a (Exchange (p, p'))
+
+
+let () =
+  let script = read_line () |> moves_of_string in
+  let pos, chars =
+    let f m (pos, chars) =
+      match m with
+      | Spin n -> Fixed.Rotate_right n :: pos, chars
+      | Exchange (i, j) -> Fixed.Transpose (i, j) :: pos, chars
+      | Partner (x, y) ->
+        pos, Fixed.Transpose (Char.code x - 97, Char.code y - 97) :: chars
+    in
+    let pos, chars = List.fold_right f script ([], []) in
+    Fixed.of_list 16 pos, Fixed.of_list 16 chars
+  in
+  let charset = "abcdefghijklmnop" in
+  List.fold_left step charset script |> prerr_endline;
+  Fixed.explain chars charset |> Fixed.transform pos |> prerr_endline;
+  let pos' = Fixed.to_disjoint_cycles pos in
+  let chars' = Fixed.to_disjoint_cycles chars in
+  Printf.printf "pos:\n%a\n" Latex.(list "itemize" (chain int)) pos';
+  let letter ch i = Printf.fprintf ch "%c" (Char.chr (97 + i)) in
+  Printf.printf "chars:\n%a\n" Latex.(list "itemize" (chain letter)) chars';
