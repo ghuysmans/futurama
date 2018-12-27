@@ -1,18 +1,25 @@
 type t = int array
-type transposition = int * int
+
+type a =
+  | Transpose of int * int
+  | Rotate_right of int
 
 let id n = Array.init n (fun i -> i)
 
 let of_list n l =
   let permut = id n in
-  let transpose (i, j) =
-    (* {permut} becomes {permut ∘ (i, j)}. *)
-    let tmp = permut.(i) in
-    permut.(i) <- permut.(j);
-    permut.(j) <- tmp
+  let f = function
+    (* {permut} becomes {permut ∘ a}. *)
+    | Transpose (i, j) ->
+      let tmp = permut.(i) in
+      permut.(i) <- permut.(j);
+      permut.(j) <- tmp
+    | Rotate_right r ->
+      let p' = Array.mapi (fun i _ -> permut.((i + r) mod n)) permut in
+      Array.blit p' 0 permut 0 n
   in
   (* {l} describes the final composition in the reverse order *)
-  List.iter transpose (List.rev l);
+  List.iter f (List.rev l);
   permut
 
 let (@) a =

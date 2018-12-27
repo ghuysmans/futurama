@@ -1,11 +1,14 @@
 (* A permutation, represented extensively *)
 type t
 
-(* An {i, j} transposition swaps positions {i} and {j}. *)
-type transposition = int * int
+type a =
+  (* An {i, j} transposition swaps positions {i} and {j}. *)
+  | Transpose of int * int
+  (* A rotation of {i} moves the last {i} elements to the front. *)
+  | Rotate_right of int
 
 (* {of_list n l} creates a permutation over {n} elements from transpositions. *)
-val of_list: int -> transposition list -> t
+val of_list: int -> a list -> t
 
 (* {a @ b} computes {a} ∘ {b}. *)
 val (@): t -> t -> t
