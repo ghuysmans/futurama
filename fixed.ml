@@ -27,7 +27,6 @@ let (@) a =
 
 let length = Array.length
 let get = Array.get
-let length = Array.length
 let iteri = Array.iteri
 
 let explain a s =
