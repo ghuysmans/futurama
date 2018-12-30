@@ -28,6 +28,12 @@ val transform: t -> string -> string
 (* {explain permutation s} shows how the {permutation} maps each position. *)
 val explain: t -> string -> string
 
+(* {square p} computes {p}^2 faster than {@}. *)
+val square: t -> t
+
+(* {pow p n} computes {p}^{n}. *)
+val pow: t -> int -> t
+
 
 val of_disjoint_cycles: int -> int list list -> t
 val to_disjoint_cycles: t -> int list list

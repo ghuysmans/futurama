@@ -37,6 +37,27 @@ let transform a s =
   Array.iteri (fun i i' -> Bytes.set s' i' s.[i]) a;
   Bytes.to_string s'
 
+let square a =
+  Array.map (Array.get a) a
+
+let pow a n =
+  let rec f x n acc =
+    if n = 0 then
+      acc
+    else if n mod 2 = 0 then
+      (* a^(2k) = (a^2)^k *)
+      f (square x) (n / 2) acc
+    else
+      (* a^(2k+1) = a * a^(2k) = a * (a^2)^c *)
+      f (square x) (n / 2) (acc @ x)
+      (*
+      equivalent to
+      f (square x) (n / 2) (x @ acc)
+      because of associativity!!
+      *)
+  in
+  f a n (id (length a))
+
 
 let disjoint l =
   let rec f = function
