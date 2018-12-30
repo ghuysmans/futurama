@@ -38,27 +38,34 @@ let rec step a = function
     let p' = String.index a c' in
     step a (Exchange (p, p'))
 
+let find_cycle_and_ff init steps n =
+  let rec move (x, l) =
+    match l with
+    | [] -> move (x, steps)
+    | s :: t -> step x s, t
+  in
+  let (<=>) (x, _) (y, _) = x = y in
+  let rec f (tortoise, hare) rem = function
+    | `Race ->
+      if tortoise <=> hare then
+        f (move tortoise, hare) rem (`Cycle 1)
+      else
+        f (move tortoise, move (move hare)) (rem - 1) `Race
+    | `Cycle cycle ->
+      if tortoise <=> hare then
+        f (tortoise, hare) (rem mod cycle) `Last
+      else
+        f (move tortoise, hare) rem (`Cycle (cycle + 1))
+    | `Last ->
+      if rem = 0 then
+        fst tortoise
+      else
+        f (move tortoise, hare) (rem - 1) `Last
+  in
+  f ((init, steps), move (move (init, steps))) n `Race
+
 
 let () =
   let script = read_moves () in
-  let charset = "abcdefghijklmnop" in
-  Printf.eprintf "naive: %s\n" (List.fold_left step charset script);
-  let pos, chars =
-    let f m (pos, chars) =
-      match m with
-      | Spin n -> Fixed.Rotate_right n :: pos, chars
-      | Exchange (i, j) -> Fixed.Transpose (i, j) :: pos, chars
-      | Partner (x, y) ->
-        pos, Fixed.Transpose (Char.code x - 97, Char.code y - 97) :: chars
-    in
-    List.fold_right f script ([], [])
-  in
-  let n =
-    match Sys.argv with
-    | [| _ |] -> 1
-    | [| _; n |] -> int_of_string n
-    | _ ->
-      Printf.eprintf "usage: %s [n]\n" (Sys.argv.(0));
-      exit 1
-  in
-  Explain.dot stdout charset n ~pos ~chars
+  let init = "abcdefghijklmnop" in
+  Printf.eprintf "%s\n" (find_cycle_and_ff init script 1_000_000_000)
