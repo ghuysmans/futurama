@@ -1,14 +1,26 @@
-let skip n l =
-  let n = n mod List.length l in (* avoid overflows? *)
-  let a = Array.of_list l in (* for random access *)
-  let rec f acc i =
-    if i = 0 then
-      (* new cycle: we're done! *)
-      List.rev acc
-    else
-      f (a.(i) :: acc) ((i + n) mod List.length l)
+let skip s l =
+  let a = Array.of_list l in
+  let visited = Array.make (Array.length a) false in
+  let rec walk first cycle current =
+    if current = first then
+      List.rev cycle
+    else (
+      visited.(current) <- true;
+      walk first (a.(current) :: cycle) ((current + s) mod Array.length a)
+    )
   in
-  f [a.(0)] n
+  let rec f acc i =
+    if i = Array.length a then
+      List.rev acc
+    else if visited.(i) then
+      (* already in a previous cycle... *)
+      f acc (i + 1)
+    else
+      match walk i [a.(i)] ((i + s) mod Array.length a) with
+      | [_] -> f acc (i + 1) (* useless *)
+      | c -> f (c :: acc) (i + 1)
+  in
+  f [] 0
 
-let pow n =
-  List.map (skip n)
+let pow n l =
+  List.map (skip n) l |> List.flatten
