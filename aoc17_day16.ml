@@ -38,34 +38,17 @@ let rec step a = function
     let p' = String.index a c' in
     step a (Exchange (p, p'))
 
-let find_cycle_and_ff init steps n =
+let tortoise_and_hare init script n =
   let rec move (x, l) =
     match l with
-    | [] -> move (x, steps)
+    | [] -> move (x, script)
     | s :: t -> step x s, t
   in
   let (<=>) (x, _) (y, _) = x = y in
-  let rec f (tortoise, hare) rem = function
-    | `Race ->
-      if tortoise <=> hare then
-        f (move tortoise, hare) rem (`Cycle 1)
-      else
-        f (move tortoise, move (move hare)) (rem - 1) `Race
-    | `Cycle cycle ->
-      if tortoise <=> hare then
-        f (tortoise, hare) (rem mod cycle) `Last
-      else
-        f (move tortoise, hare) rem (`Cycle (cycle + 1))
-    | `Last ->
-      if rem = 0 then
-        fst tortoise
-      else
-        f (move tortoise, hare) (rem - 1) `Last
-  in
-  f ((init, steps), move (move (init, steps))) n `Race
+  Floyd.pow (<=>) move (init, []) n |> fst
 
 
 let () =
   let script = read_moves () in
   let init = "abcdefghijklmnop" in
-  Printf.eprintf "%s\n" (find_cycle_and_ff init script 1_000_000_000)
+  Printf.eprintf "%s\n" (tortoise_and_hare init script 1_000_000_000)
