@@ -38,14 +38,8 @@ let rec step a = function
     let p' = String.index a c' in
     step a (Exchange (p, p'))
 
-let tortoise_and_hare init script n =
-  let rec move (x, l) =
-    match l with
-    | [] -> move (x, script)
-    | s :: t -> step x s, t
-  in
-  let (<=>) (x, _) (y, _) = x = y in
-  Floyd.pow (<=>) move (init, []) n |> fst
+let naive script x =
+  List.fold_left step x script
 
 
 let () =
@@ -64,8 +58,8 @@ let () =
   let init = "abcdefghijklmnop" in
   let result =
     match a with
-    | `Naive -> Util.pow (fun x -> List.fold_left step x script) init n
-    | `Tortoise -> tortoise_and_hare init script n
+    | `Naive -> Util.pow (naive script) init n
+    | `Tortoise -> Floyd.pow (=) (naive script) init n
     | `Cycle | `Pow as a' ->
       let pos, chars =
         let f m (pos, chars) =
