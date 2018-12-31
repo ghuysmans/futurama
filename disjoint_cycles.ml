@@ -24,3 +24,8 @@ let skip s l =
 
 let pow n l =
   List.map (skip n) l |> List.flatten
+
+let order l =
+  match List.map List.length l with
+  | [] -> 1
+  | h :: t -> List.fold_left Util.lcm h t

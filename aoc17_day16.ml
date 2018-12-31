@@ -50,6 +50,7 @@ let () =
     | [| _; n |] -> int_of_string n, `Naive
     | [| _; "-t"; n |] -> int_of_string n, `Tortoise
     | [| _; "-c"; n |] -> int_of_string n, `Cycle
+    | [| _; "-o"; n |] -> int_of_string n, `Order
     | [| _; "-p"; n |] | [| _; "-g"; n |] -> int_of_string n, `Pow
     | _ ->
       Printf.eprintf "usage: %s [-t|-c|-p] [n]\n" Sys.argv.(0);
@@ -60,7 +61,7 @@ let () =
     match a with
     | `Naive -> Util.pow (naive script) init n
     | `Tortoise -> Floyd.pow (=) (naive script) init n
-    | `Cycle | `Pow as a' ->
+    | `Cycle | `Pow | `Order as a' ->
       let pos, chars =
         let f m (pos, chars) =
           match m with
@@ -82,6 +83,10 @@ let () =
           in
           fast_forward pos n, fast_forward chars n
         | `Pow ->
+          Fixed.pow pos n, Fixed.pow chars n
+        | `Order ->
+          let order p = Fixed.to_disjoint_cycles p |> Disjoint_cycles.order in
+          let n = n mod Util.lcm (order pos) (order chars) in
           Fixed.pow pos n, Fixed.pow chars n
       in
       Fixed.(explain chars init |> transform pos)
