@@ -1,0 +1,49 @@
+# apt install --no-install-recommends fp-compiler-3.0.0 fp-units-rtl-3.0.0
+	ça évite d'installer des outils et des libs inutiles pour moi
+	sauf que c'est une version trop ancienne, pas encore de generics
+
+chaîne : au plus une flèche par noeud
+	quelques exercices sur papier :
+		est-ce que c'est une chaîne ?
+			flèches foireuses
+			cycles (bah oui ça convient aussi)
+		où es-tu après n pas ?
+		ça finit un jour ?
+	listes chaînées concrètes plus tard (pas avec moi)
+		une fonction next générique pas facile en Pascal, pff
+	automates
+		euuuh on s'éloigne à mort, même si c'est intéressant
+	automate cellulaire (fini)
+		fastidieux sur papier, tant pis ?
+
+danses :
+	sur papier, partie fixe avec les indices et bouts colorés qu'on déplace
+	commencer en ne touchant qu'aux positions ou en ne faisant que des échanges
+		démo physique avec de la ficelle et des plaques trouées ?
+			craquage ça mais montrer la figure générée en LaTeX
+	évoquer l'épisode de Futurama ?
+		oui mais pas passer de temps dessus :
+		solution toute faite pas évidente
+	exprimer sous forme d'un programme les pas
+	exécuter (sur ma machine)
+		quel temps ça prendrait ?
+			faire une règle de trois et donner la durée (ordre de grandeur ?)
+		qu'est-ce que ça génère ?
+			« eh mais ça boucle, comme avec les chaînes »
+	copies en mémoire
+		compter combien on en fait (idée de complexité)
+		notion d'optimisation : parfois besoin de penser tout à fait autrement
+	*** déjà tout ça c'est super, on parle de plein de choses importantes
+	structure de groupe car composition de fonctions (discrètes donc dessin)
+	cycles disjoints avec des listes circulaires ????
+		(un élément pris seul finit par se retrouver au même endroit : orbite)
+		bof, peut-être moins amusant à représenter en Pascal
+		puis on a déjà résolu le problème
+
+
+les 3è sont les plus motivés mais pas encore eu de tableaux
+horaire de Quentin :
+	lundi: de 8h15 à 9h55
+	mardi: de 8h15 à 10h45 (au choix)
+	mercredi: de 9h55 à 12h40 (on peut faire deux groupes)
+	vendredi: de 8h15 à 10h45
