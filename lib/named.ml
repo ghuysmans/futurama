@@ -19,7 +19,7 @@ let of_list l =
     List.fold_right (fun a acc ->
       match a with
       | Transpose (x, y) -> x :: y :: acc
-      | Rotate_right n -> acc (* no new value *)
+      | Rotate_right _ -> acc (* no new value *)
     ) l [] |>
     List.sort_uniq compare |>
     index

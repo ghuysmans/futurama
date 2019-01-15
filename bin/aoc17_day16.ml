@@ -42,6 +42,8 @@ let naive script x =
   List.fold_left step x script
 
 
+open Permut
+
 let () =
   let script = read_moves () in
   let n, a =

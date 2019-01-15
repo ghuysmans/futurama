@@ -1,0 +1,3 @@
+(executables
+ (names aoc17_day16 futurama rubik)
+ (libraries permut))

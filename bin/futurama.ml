@@ -1,3 +1,5 @@
+open Permut
+
 let () =
   let a, h, l, p, b, e, w, f, z = 0, 1, 2, 3, 4, 5, 6, 7, 8 in
   let moves =

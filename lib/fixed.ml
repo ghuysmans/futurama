@@ -62,7 +62,7 @@ let pow a n =
 let disjoint l =
   let rec f = function
     | [] -> true
-    | x :: y :: t when x = y -> false
+    | x :: y :: _ when x = y -> false
     | _ :: t -> f t
   in
   f (List.flatten l |> List.sort compare)

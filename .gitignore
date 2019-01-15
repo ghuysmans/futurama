@@ -1,9 +1,9 @@
 *.swp
 _build/
 out.tex
-*.byte
 *.dot
 *.png
 *.aux
 *.log
 *.pdf
+.merlin
