@@ -2,7 +2,7 @@
 	ça évite d'installer des outils et des libs inutiles pour moi
 	sauf que c'est une version trop ancienne, pas encore de generics
 
-chaîne : au plus une flèche par noeud
+chaîne : au plus une flèche sortante par noeud
 	quelques exercices sur papier :
 		est-ce que c'est une chaîne ?
 			flèches foireuses
@@ -15,6 +15,7 @@ chaîne : au plus une flèche par noeud
 		euuuh on s'éloigne à mort, même si c'est intéressant
 	automate cellulaire (fini)
 		fastidieux sur papier, tant pis ?
+		au moins évoquer le problème
 
 danses :
 	sur papier, partie fixe avec les indices et bouts colorés qu'on déplace
@@ -35,6 +36,7 @@ danses :
 		notion d'optimisation : parfois besoin de penser tout à fait autrement
 	*** déjà tout ça c'est super, on parle de plein de choses importantes
 	structure de groupe car composition de fonctions (discrètes donc dessin)
+		pas leur faire peur avec le vocabulaire : pas encore vues en math
 	cycles disjoints avec des listes circulaires ????
 		(un élément pris seul finit par se retrouver au même endroit : orbite)
 		bof, peut-être moins amusant à représenter en Pascal

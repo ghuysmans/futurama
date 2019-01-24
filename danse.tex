@@ -1,0 +1,192 @@
+\documentclass[11pt,a4paper,oneside]{article}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{amsmath}
+
+\begin{document}
+\emph{Le problème décrit ici dérive d'Advent of Code
+\footnote{\url{https://adventofcode.com/2017/day/16}},
+un calendrier de l'Avent avec
+des problèmes algorithmiques au lieu de chocolats.}
+
+\section{Introduction}
+Une société de petits personnages adore la danse. Chaque année, pour Noël, ils
+organisent une grande fête à laquelle leur Grand Roi Vénéré participe. Sa
+Majesté n'autorise pas tout et n'importe quoi : seules les danses qui La font
+commencer et finir première sont permises. Si elle finit à une autre place, le
+chorégraphe est exécuté. C'est ce qui est arrivé au chorégraphe de la Cour
+l'année passée : il faut dire qu'avec son grand âge, il n'avait déjà plus toute
+sa tête. Cette année, c'est à son fils de prendre la relève : tous les autres
+ont bien trop peur de mourir pour un pas de travers. Il doit faire quelque
+chose de grandiose s'il veut faire oublier l'erreur de son père et profiter de
+ses cadeaux. Le problème, c'est qu'il a laissé tomber ses papiers quelques
+jours avant Noël et qu'il avait oublié de les numéroter. Il hésite entre deux
+possibilités et il n'a plus le temps de les essayer. Qu'est-ce qu'on attend ?
+
+Ils commencent dans l'ordre ($A\dots P$) et enchaînent trois types de pas :
+\begin{itemize}
+\item \texttt{spin} $n$ ($\forall n \in \{1\dots15\}$) :
+	les $n$ derniers deviennent les $n$ premiers.
+\item \texttt{exchange} $i$ $j$ ($\forall i,j \in \{0\dots15\}$) :
+	ceux en $i$ et $j$ échangent leur place.
+\item \texttt{partner} $ab$ ($\forall a,b \in \{A\dots P\}$) :
+	$a$ et $b$ échangent leur place.
+\end{itemize}
+
+\section{Positions}
+Pour simplifier nos exemples, nous commencerons avec quatre couleurs (pour
+quatre personnages) et deux types de pas : \texttt{spin} et \texttt{exchange}.
+
+Par groupes, travaillez sur ces exercices :
+\begin{enumerate}
+\item Représentez les étapes successives de cette danse :
+	\begin{itemize}
+	\item (début)
+	\item \texttt{spin 3}
+	\item \texttt{spin 3}
+	\item \texttt{exchange 0 1}
+	\item \texttt{exchange 2 3}
+	\item \texttt{spin 1}
+	\item \texttt{exchange 1 3}
+	\end{itemize}
+\item \emph{Implémentez} en Pascal ces pas (faites des schémas !) :
+	\begin{itemize}
+	\item \texttt{procedure spin(n: 1..15);}
+	\item \texttt{procedure exchange(i, j: 0..15);}
+	\end{itemize}
+\item L'ordre est-il important ? Toujours, jamais, parfois ?
+\end{enumerate}
+
+\section{Personnages}
+Jusqu'ici, nous avons ignoré \texttt{partner} qui échange deux personnages. On
+peut choisir de les faire directement ou séparément des autres pas, puisqu'ils
+ne dépendent pas du tout des positions !
+
+Par groupes, travaillez sur ces exercices :
+\begin{enumerate}
+\item De quoi la \texttt{procedure partner(a, b: 'A'..'P');} a-t-elle besoin ?
+	Écrivez sa signature (son prototype).
+\item Implémentez-les en même temps (deux personnes par sous-programme).
+\end{enumerate}
+
+\section{Optimisations}
+Ça y est, notre ami a survécu. Il vous sera \emph{éternellement reconnaissant}
+mais il a encore un <<~petit quelque chose~>> à nous demander.
+%FIXME ça correspond à la traduction
+
+Sa~Majesté se lasse de tout ça et a décidé de changer les règles :
+pendant le prochain milliard d'années (ils vivent tous très longtemps mais la
+principale cause de mortalité est la décapitation), l'Élu
+(qu'Elle essaiera de ne pas exécuter entre-temps, Elle fera un effort)
+participera à sa place et ils reprendront du même endroit l'année suivante.
+%Grâce à ses talents de négociateur, il a pu obtenir de Sa~Majesté qu'elle
+%accepte plus de danses originales (Elle n'est plus toujours première à la fin)
+%à condition qu'après un milliard d'années, Elle finisse à nouveau la première.
+La danse ne changera pas (quel intérêt si Elle ne regarde pas ?).
+Le chorégraphe doit maintenant prédire la position exacte des danseurs après
+tout ce temps. S'il se trompe, il sera exécuté, lui et toute sa famille.
+%Son règne n'est pas près de s'arrêter : Sa~Majesté est immortelle.
+
+%Exercice : combien de temps nous faudrait-il pour calculer ça naïvement ?
+
+\subsection{Sur un cercle}
+Imaginons maintenant que les danseurs se trouvent sur un cercle.
+
+Par groupes, répondez à ces questions en partant d'un schéma :
+\begin{enumerate}
+\item Où se trouve le premier danseur ?
+\item Que fait \texttt{spin 2} ? Est-ce que ça va plus vite ?
+\item Que fait \texttt{exchange 0 2} ?
+\item Un tableau est-il encore adapté ?
+\end{enumerate}
+
+\subsection{Profiling}
+Un \emph{profiler} permet de connaître la proportion de temps passé dans
+une partie d'un programme. Voici ce qu'il a fourni comme résultat :
+%bluff complet
+\texttt{partner} passe trop de temps à chercher où se trouvent les caractères
+qu'elle doit intervertir (et ce, même si on l'a bien implémentée).
+
+Changeons totalement notre manière de voir les choses : puisqu'on peut faire
+séparément ces échanges, on peut utiliser un tableau indicé
+par un personnage (\texttt{subst: array['A'..'P'] of 'A'..'P'}) afin d'associer
+à chaque personnage celui avec lequel il a été échangé.
+Il ne stocke plus où se trouvent les personnages mais plutôt comment les échanger.
+
+Cette définition peut paraître étrange : habituellement, on indice un tableau
+avec un entier, pas un caractère. En réalité, on peut voir un caractère
+comme un entier sur un octet\footnote{Ce n'est pas vrai en général ($\pi$...)
+mais nous n'utilisons que les lettres de A à P. Un~octet (\emph{byte}) est
+composé de 8~bits (0 ou 1), ce qui fait $2^8=256$ possibilités.} : en ASCII,
+les majuscules commencent à 65 et se suivent, donc B=66, C=67, etc. Il peut
+alors retirer 65 de chaque lettre pour obtenir des indices dans $\{0..15\}$ :
+
+\begin{table}[h]
+\center
+\begin{tabular}{c|c|c}
+Lettre & ASCII & Indice \\ \hline\hline
+A & 65 & 0 \\ \hline
+B & 66 & 1 \\ \hline
+C & 67 & 2 \\ \hline
+\dots & \dots & \dots \\ \hline
+P & 80 & 15
+\end{tabular}
+\caption{Équivalence d'indices}
+\end{table}
+
+Par groupes, travaillez sur ces exercices :
+\begin{enumerate}
+\item Que contient le tableau avant le premier \texttt{partner xx} ?
+\item Construisez un tableau qui représente \texttt{partner AB}.
+\item Construisez un autre tableau représentant \texttt{partner BC}.
+\item Comment pourriez-vous les \emph{composer} ? L'ordre importe-t-il ?
+	Comparez en effectuant manuellement ces transformations sur \texttt{ABCD}.
+%\item Comment le tableau transforme-t-il la chaîne obtenue précédemment ?
+	%notion d'inverse, p-ê un peu hardcore ici haha
+\end{enumerate}
+
+Le tableau qu'on construit peut aussi être vu comme une fonction qui prend comme
+paramètre un personnage, et cette fonction change au cours de l'exécution
+du programme.
+
+TODO incruster un exemple graphique puis son résumé
+
+\subsection{Un peu de théorie des groupes}
+%FIXME quand même vérifier qu'on parle vraiment de groupe mais normalement oui
+Les applications ($f:X\rightarrow X$) munies de la composition forment un
+groupe\footnote{Voir le cours de maths de 1ère secondaire...} non commutatif
+(preuves laissées au lecteur\footnote{Il faut repartir de la définition de
+fonction, pas encore vue en 3ème secondaire.}) :
+%TODO peut-être lourdingue donc pas dit comme ça, vérifier
+\begin{itemize}
+\item l'élément neutre est la fonction identité :
+	$\forall f \quad (id\circ f) = (f\circ id) = f$
+\item la composition de deux fonctions reste une fonction
+	\footnote{On dit que la composition est interne.}
+\item la composition est associative :
+	$\forall f, g, h \quad (f\circ g)\circ h = f\circ (g\circ h)$
+%TODO inverse, histoire d'être complet
+\end{itemize}
+
+On peut ainsi calculer efficacement la $n$ème puissance d'une application~$f$,
+à l'aide de l'algorithme de l'exponentiation rapide qui a rendu possible la
+cryptographie moderne qui utilisait de très grands nombres à l'exposant : \[
+	f^n = \left\{\begin{array}{ll}
+		id &
+			\text{si $n=0$} \\
+		\left(f^2\right)^{\frac n2} = \left(f\circ f\right)^{\frac n2} &
+			\text{si $n$ est pair} \\
+		f\circ \left(f\circ f\right)^{\left\lfloor\frac n2\right\rfloor} =
+		\left(f\circ f\right)^{\left\lfloor\frac n2\right\rfloor}\circ f &
+			\text{si $n$ est impair (par assoc.)}
+	\end{array}\right.
+\]
+
+%on calcule donc f(g(h(x))) en calculant d'abord (f\circ g\circ h), plus rapide
+%TODO parler de l'inverse et de ce qu'on calculait dans le désordre...
+
+\end{document}
