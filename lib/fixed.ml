@@ -1,3 +1,4 @@
+(* FIXME functorize this *)
 type t = int array
 
 type a =
@@ -22,15 +23,16 @@ let of_list n l =
   List.iter f (List.rev l);
   permut
 
-let (@) a =
-  Array.map (fun i -> a.(i))
-
 let length = Array.length
 let get = Array.get
 let iteri = Array.iteri
+let map = Array.map
+
+let (@) a =
+  map (get a)
 
 let explain a s =
-  String.mapi (fun i _ -> s.[Array.get a i]) s
+  String.mapi (fun i _ -> s.[get a i]) s
 
 let transform a s =
   let s' = Bytes.make (String.length s) '\000' in
@@ -38,7 +40,7 @@ let transform a s =
   Bytes.to_string s'
 
 let square a =
-  Array.map (Array.get a) a
+  a @ a
 
 let pow a n =
   let rec f x n acc =
@@ -74,7 +76,7 @@ let to_disjoint_cycles a =
       List.rev cycle
     else (
       visited.(current) <- true;
-      walk first (current :: cycle) a.(current)
+      walk first (current :: cycle) (get a current)
     )
   in
   let rec f acc i =
@@ -84,7 +86,7 @@ let to_disjoint_cycles a =
       (* already in a previous cycle... *)
       f acc (i + 1)
     else
-      match walk i [i] a.(i) with
+      match walk i [i] (get a i) with
       | [_] -> f acc (i + 1) (* useless *)
       | c -> f (c :: acc) (i + 1)
   in

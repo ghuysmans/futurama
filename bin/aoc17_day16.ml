@@ -22,6 +22,7 @@ let read_moves () =
   in
   f [read_move ()]
 
+(* this function could get its own module? still have to separate p & x... *)
 let rec step a = function
   | Spin i ->
     let l = String.length a - i in
