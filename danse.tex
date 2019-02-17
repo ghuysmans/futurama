@@ -487,8 +487,51 @@ même que de calculer les (nombreux) résultats intermédiaires mais c'est bien
 plus rapide.
 
 \subsection{Cycles à supports disjoints}
+Il y a une manière plus compacte de représenter nos fonctions.
+Prenons un exemple :
+\marginpar{dessiner à côté !}
+\begin{itemize}
+\item $f(A)=A$
+\item $f(B)=C$
+\item $f(C)=B$
+\item $f(D)=D$
+\end{itemize}
 
+En suivant l'\emph{orbite} de $B$ (en composant la fonction avec elle-même et
+en regardant chaque transformation intermédiaire...),
+on trouve $(B,C)$ : $A$ et $D$ ne bougent pas, inutile de les écrire.
+Une autre possibilité est $(C,B)$, elles sont identiques à une rotation près.
+
+Voici un autre exemple :
+\begin{itemize}
+\item $f(A)=C$
+\item $f(B)=D$
+\item $f(C)=B$
+\item $f(D)=A$
+\end{itemize}
+
+Répondez à ce questions :
+\begin{enumerate}
+\item Quelle est l'unique cycle dans l'exemple ci-dessous ?
+\item Combien de façon existe-t-il de l'écrire ?
+\end{enumerate}
+\marginpar{$(A,C,B,D)$}
+
+L'ordre de ces espèces de facteurs n'a pas d'importances (on dit qu'ils
+\emph{commutent}) : ils ne peuvent pas s'influencer puisqu'ils
+contiennent des éléments différents !
 %TODO décomposition des nombres, test de primalité ?
+
+Calculer la composée de deux fonctions représentées de cette manière n'est pas
+pratique (amusez-vous...) mais calculer son ordre devient visuel : c'est le plus
+petit commun multiple entre les longueurs des cycles qui la composent !
+\marginpar{TODO vérifier}
+%TODO schéma
+
+Cette représentation permet de facilement savoir en combien d'applications une
+formule sur le Rubik's Cube s'annulera (si on oublie la parité, mais c'est une
+autre histoire !).
+\marginpar{groupe compliqué}
 
 \section{Autre application} %FIXME further work???
 On vous demande d'optimiser des programmes de cette forme et d'éliminer les
@@ -498,5 +541,7 @@ possible :
 \begin{verbatim}
 a, b, c, d = d, b, a, c
 \end{verbatim}
+
+%TODO fils de couleur ? rendre ça original sinon juste permutation
 
 \end{document}
