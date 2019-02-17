@@ -342,6 +342,21 @@ groupe non commutatif appelé le groupe des permutations $S_n$ avec $n=|X|$ :
 	\[\forall f\in S_n, \exists f'\in S_n \quad f\circ f'=f'\circ f=id\]
 	Ici, puisque cet inverse est unique, on se permet de l'écrire $f^{-1}$.
 	%TODO preuve
+
+	Une propriété intéressante découle de cette définition
+	(aussi valable ailleurs) :
+	\marginpar{récurrence}
+	\[
+		\forall k\in\mathbb{N}_0, f_1,f_2\dots f_k \in S_n \quad
+		\left(f_1\circ f_2\circ \dots \circ f_k\right)^{-1} =
+		\left(f_k^{-1}\circ f_{k-1}^{-1}\circ \dots \circ f_1^{-1}\right)
+	\]
+	%\begin{figure}[ht]
+	%	\centering
+	%	\includegraphics[width=0.3\linewidth]{rubik.png}
+	%	\caption{Illustration avec un Rubik's Cube}
+	%	\label{fig:rubik}
+	%\end{figure}
 \end{itemize}
 
 On peut ainsi calculer efficacement la $n$ème puissance d'un élément $x$ d'un
