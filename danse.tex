@@ -46,12 +46,15 @@ Ils commencent dans l'ordre ($A\dots P$) et enchaînent trois types de pas :
 \begin{itemize}
 \item \texttt{spin} $n$ ($\forall n \in \{1\dots15\}$) :
 	\marginpar{expliquer la notation : $\forall x \in E$...}
-	les $n$ derniers viennent devant les premiers.
+	les $n$ derniers viennent devant les premiers. \\
+	Par exemple, \texttt{spin 1} sur \texttt{DACB} donne \texttt{BDAC}.
 \item \texttt{exchange} $i$ $j$ ($\forall i,j \in \{0\dots15\}$) :
-	ceux en $i$ et $j$ échangent leur place.
-\item \texttt{partner} $ab$ ($\forall a,b \in \{A\dots P\}$) :
+	ceux en $i$ et $j$ échangent leur place. \\
+	Par exemple, \texttt{exchange 0 2} sur \texttt{CBDA} donne \texttt{DBCA}.
+\item \texttt{partner} $a b$ ($\forall a,b \in \{A\dots P\}$) :
 	$a$ et $b$ échangent leur place.
-	\marginpar{ne pas confondre}
+	\marginpar{ne pas confondre} \\
+	Par exemple, \texttt{partner A D} sur \texttt{DBAC} donne \texttt{ABDC}.
 \end{itemize}
 
 \chapter{Simulation}\label{ch:sim}
