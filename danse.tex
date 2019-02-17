@@ -5,12 +5,14 @@
 \usepackage[utf8]{inputenc}
 \usepackage{url}
 \usepackage{tikz}
+\usetikzlibrary{automata}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{marginnote}
 \usepackage[left=1cm,right=4cm,marginparwidth=3cm]{geometry}
 \usepackage{amsmath}
 \usepackage{enumitem}
+\usepackage{wrapfig}
 
 %FIXME mettre en évidence les définitions et propriétés ?
 %FIXME pour les mathématiciens, donner de quoi le faire à la main : à partir de
@@ -206,7 +208,22 @@ programme. Voici ce qu'il nous a appris :
 \section{Sur un cercle}
 Imaginons maintenant que les danseurs se trouvent sur un cercle.
 
-Par groupes, répondez à ces questions en partant d'un schéma :
+\begin{wrapfigure}[8]{r}{0.4\textwidth}
+	\centering
+	\begin{tikzpicture}
+		\draw (0,0) circle [radius=0.7cm];
+		\draw (0,0) circle [radius=1.4cm];
+		\draw (0,0) circle [radius=2.1cm];
+		%\foreach \angle [count=\xi] in {0,90,180,270} {
+			%\draw[dashed] (\angle:0.2cm) -- (\angle:2cm);
+		%}
+	\end{tikzpicture}
+	\caption{Cercle (à compléter !)}
+	\label{fig:circle}
+\end{wrapfigure}
+
+Par groupes, répondez à ces questions :
+
 \begin{enumerate}
 \item Où se trouve le premier danseur ?
 \item Y a-t-il plusieurs façons de lire un tel schéma ?
