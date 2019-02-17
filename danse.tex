@@ -341,8 +341,9 @@ groupe non commutatif appelé le groupe des permutations $S_n$ avec $n=|X|$ :
 \end{itemize}
 
 On peut ainsi calculer efficacement la $n$ème puissance d'un élément $x$ d'un
-groupe $(G, \times)$ à l'aide de l'algorithme de l'exponentiation rapide sur
-lequel reposent plusieurs outils de cryptographie moderne :
+groupe $(G, \times)$ à l'aide de l'algorithme de l'exponentiation rapide
+%sur lequel reposent plusieurs outils de cryptographie moderne :
+dont voici la preuve et la définition :
 \marginpar{sans ça, pas de commerce en ligne}
 \[
 	\forall n \in \mathbb{N}, x \in G \quad
@@ -370,26 +371,55 @@ Si on le particularise à notre groupe $S_n$, on trouve : \[
 	\end{array}\right.
 \]
 
-%produit direct
+%TODO parler de l'inverse et de ce qu'on calculait dans le désordre...
+%donc interprétation de la modification sans trop comprendre ce qu'on faisait
 
-%\subsubsection{Sous-groupe}
-%TODO ss-g cyclique car prouvé avec les suites
+$\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini
+(par le principe des tiroirs) et \emph{cyclique} d'ordre $k$ : \[
+%FIXME détailler ?
+	\forall f\in S_n, \exists k\in \mathbb{N} \quad f^k=id
+\]
+%TODO sous-groupe ? pas utile je crois
+
+On a déjà écrit plus haut qu'il fallait faire ce travail séparément pour les
+positions et pour les personnages. Le concept de produit direct de groupes
+modélise cette manière de travailler. Soient $G$ et $H$ des groupes. On définit
+une opération $\star$ entre des éléments de $G\times H$ comme suit : \[
+%$G\times H$ comme un groupe d'ensemble $G\times H$ et d'opération : \[
+	(g_1, h_1) \star (g_2, h_2) = (g_1g_2, h_1h_2)
+\]
 %Si G est cyclique, G est commutatif.
 	%Soient x et y des éléments de G.
 	%Soit g un générateur de ce groupe.
-	%On sait donc qu'il existe i€N x=g^i et j€N y=g^j.
+	%On sait donc qu'il existe i\in\mathbb{N} x=g^i et j\in\mathbb{N} y=g^j.
 	%xy=(g^i)(g^j)=g^(i+j)=g^(j+i)=(g^j)(g^i)=yx
+
+On prouve facilement que $(G\times H, \star)$ forme un groupe (vérifiez !).
+Une danse complète est ainsi un élément d'un tel groupe :
+$d\in S_{16}\times S_{16}$.
+Calculer l'effet de la répétition d'une danse peut se faire <<~en une fois~>>
+grâce au même algorithme sur ce nouveau groupe.
+
+On peut prouver que le produit direct de deux groupes cycliques forme un groupe
+cyclique, ce qui motive l'algorithme du lièvre et de la tortue présenté
+précédemment (mais qui demandait bien moins de connaissances sur notre domaine).
+%TODO le faire ?
+
 %TODO énoncé Lagrange et sa conséquence : son ordre divise celui de $S_n$
 %TODO comprendre https://math.stackexchange.com/questions/2304763/longest-cycle-of-permutation-of-n-elements
 %TODO comprendre https://math.stackexchange.com/questions/59417/composition-of-permutation-to-generate-all-permutations
 
-%on calcule donc f(g(h(x))) en calculant d'abord (f\circ g\circ h), plus rapide
-%TODO parler de l'inverse et de ce qu'on calculait dans le désordre...
-%donc interprétation de la modification sans trop comprendre ce qu'on faisait
+\subsubsection{Conclusion}
+Plutôt que de calculer $\overbrace{d(d(d(\dots}^\text{$n$ fois} x)))$,
+on calcule $\left(d^n\right)(x)$ en manipulant la fonction. Le résultat est le
+même que de calculer les (nombreux) résultats intermédiaires, c'est seulement
+plus rapide.
 
-%TODO cycles à support disjoint : évoquer la décomposition des nombres et ce
-%qu'apportent ces schémas (test de primalité je crois)
+\subsection{Cycles à supports disjoints}
 
+%TODO décomposition des nombres, test de primalité ?
+
+\section{Autres applications} %FIXME autre nom pour l'ouverture ?
 %ouverture : optimiseur OCaml/Python ?
 
 \end{document}
