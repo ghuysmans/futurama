@@ -140,6 +140,51 @@ Il se peut qu'il ne soit pas nécessaire de calculer $u_{1000000000}$ : \[
 	%\left(\forall n \in \mathbb{N} : n\geq j \implies d_n=d_{n-(j-i)}\right)
 \]
 
+Puisque $i<j \iff \exists k \in \mathbb{N}_0 : j=i+k$, on peut éliminer les
+tours inutiles (voir figure \ref{fig:cycle}) : \[
+	\exists i \in \mathbb{N}, k \in \mathbb{N}_0 \quad
+	u_i=u_{i+k} \implies
+	\left(\forall n \geq i : u_n=u_{i+(n-i)\text{ mod } k}\right)
+\]
+
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}[node distance=1.5cm]
+		\node (0) {$u_0$};
+		\node (1) [right of=0] {$u_1$};
+		\node (2) [right of=1] {$u_2$};
+		\node (i) [right of=2] {$u_i$};
+		\node (i+1) [right of=i] {$u_{i+1}$};
+		\node (i+2) [right of=i+1] {$u_{i+2}$};
+		\node (j) [above of=i,node distance=1cm] {$u_j$};
+		\node (j+1) [above of=i+1,node distance=1cm] {$u_{j+1}$};
+		\node (j+2) [above of=i+2,node distance=1cm] {$u_{j+2}$};
+		\draw (0) edge[->] node [above,midway] {$d$} (1);
+		\draw (1) edge[->] node [above,midway] {$d$} (2);
+		\draw (2) edge[->] node [above,midway] {$\dots$} (i);
+		\draw (i) edge[->] node [above,midway] {$d$} (i+1);
+		\draw (i+1) edge[->] node [above,midway] {$d$} (i+2);
+		\draw (i+2) edge[->,bend left] node [below,midway] {$\dots$} (i);
+		%\draw (j) edge[->] node [above,midway] {$d$} (j+1);
+		%\draw (j+1) edge[->] node [above,midway] {$d$} (j+2);
+		%\draw (j+2) edge[->,bend right] node [above,midway] {$\dots$} (j);
+		\draw (i) edge[double equal sign distance] (j);
+		\draw (i+1) edge[double equal sign distance] (j+1);
+		\draw (i+2) edge[double equal sign distance] (j+2);
+	\end{tikzpicture}
+	\caption{Suite périodique}
+	\label{fig:cycle}
+\end{figure}
+
+En pratique, la période $k$ peut être assez longue, c'est pourquoi on ne
+stockera pas toutes les valeurs en mémoire. La \emph{conclusion} de cette
+implication nous donne une façon de calculer $u_n$ quand $n\geq i$ (on espère
+que $i\ll n$...) mais nous avons besoin de calculer $k$ et $i$.
+
+Ce problème a déjà été étudié en théorie des graphes (un graphe est un ensemble
+de \emph{points} ou \emph{noeuds} reliés par \emph{arêtes})
+et nous allons redécouvrir l'\emph{algorithme du lièvre et de la tortue}.
+
 \section{Profilage}
 Un \emph{profiler} permet (entre autres) de connaître la proportion de temps
 passé dans une partie d'un programme en inspectant régulièrement l'état d'un
