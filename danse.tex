@@ -328,6 +328,8 @@ Pourquoi raisonner de manière abstraite ?
 \item pour impressionner la galerie \emph{(un peu, j'avoue)}
 \end{itemize}
 
+%TODO parler des deux principales notations ??
+
 Les applications ($f:X\rightarrow X$) munies de la composition $\circ$ forment un
 groupe non commutatif appelé le groupe des permutations $S_n$ avec $n=|X|$ :
 \begin{itemize}
@@ -363,11 +365,19 @@ groupe non commutatif appelé le groupe des permutations $S_n$ avec $n=|X|$ :
 	%\end{figure}
 \end{itemize}
 
-On peut ainsi calculer efficacement la $n$ème puissance d'un élément $x$ d'un
-groupe $(G, \times)$ à l'aide de l'algorithme de l'exponentiation rapide
+Question : avez-vous des exemples de groupe plus simples que vous manipulez tous
+les jours peut-être sans le savoir ? Êtes-vous sûr que c'en est vraiment un ?
+\marginpar{$(\mathbb{N}_0,\times)$, attention}
+
+Une telle définition permet de définir des algorithmes génériques, c'est-à-dire
+des méthodes pour résoudre des problèmes sur
+\emph{n'importe quoi qui forme un groupe}.
+L'algorithme de l'exponentiation rapide
+\marginpar{début du commerce en ligne}
 %sur lequel reposent plusieurs outils de cryptographie moderne :
-dont voici la preuve et la définition :
-\marginpar{sans ça, pas de commerce en ligne}
+permet par exemple de calculer (plus rapidement que naïvement)
+la $n$ème puissance d'un élément $x$ d'un groupe $(G, \times)$,
+voici à la fois sa preuve et sa définition :
 \[
 	\forall n \in \mathbb{N}, x \in G \quad
 	x^n = \left\{\begin{array}{ll}
@@ -381,7 +391,19 @@ dont voici la preuve et la définition :
 	\end{array}\right.
 \]
 
-Si on le particularise à notre groupe $S_n$, on trouve : \[
+Questions :
+\begin{enumerate}
+\item À l'aide de cet algorithme, que vaut $2^{65}\text{ mod }19$ ?
+	Quel groupe utilisez-vous ?
+	\marginpar{
+		$2^a(1,2\dots18)$ forme une permutation $\forall a\in\mathbb{N}$ car
+		$(2,19)=1$, cf. preuve de Fermat dans \emph{toy-crypto}}
+\item (Hors-sujet) Sans l'appliquer, y a-t-il plus ou moins de possibilités pour
+	$2^{42507}\text{ mod }6$ ?
+\end{enumerate}
+%FIXME évoquer Fermat ? nan, complètement hors-sujet
+
+Si on particularise l'algorithme à notre groupe $S_n$, on trouve : \[
 	\forall n \in \mathbb{N}, f \in S_n \quad
 	f^n = \left\{\begin{array}{ll}
 		id &
@@ -395,8 +417,8 @@ Si on le particularise à notre groupe $S_n$, on trouve : \[
 \]
 
 $\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini
-(par le principe des tiroirs) et \emph{cyclique} d'ordre $k$ : \[
-%FIXME détailler ?
+et donc \emph{cyclique} d'ordre $k$ par le principe des tiroirs : \[
+%FIXME schématiser ?
 	\forall f\in S_n, \exists k\in \mathbb{N} \quad f^k=id
 \]
 
@@ -410,7 +432,23 @@ Pour éviter de créer une multitude de tableaux, on peut s'intéresser à l'eff
 en terme de composition de fonctions qu'a l'échange direct (on pourrait dire
 brutal...) des cases $i$ et $j$.
 
-TODO application inverse et calcul dans le désordre...
+Questions :
+\begin{enumerate}
+\item Que calcule la nouvelle fonction (le nouveau tableau) selon l'original(e)?
+\item Comment exploiter la propriété sur l'inverse afin de traiter les pas dans
+	l'ordre du script ?
+\end{enumerate}
+\marginpar{$g(x) = f\left(h_{ab}(x)\right)$, $h_{ab}$ a 3 cas}
+%\[\begin{array}{ll}
+	%g(x) &= f\left(h_{ab}(x)\right) \\
+	%h_{ab}(x) &= \left\{\begin{array}{ll}
+		%b & x=a \\
+		%a & x=b \\
+		%x & \text{sinon}
+	%\end{array}\right.
+%\end{array}\]
+
+Le même raisonnement s'applique aussi à une rotation.
 
 \subsubsection{Toute une danse}
 On a écrit plus haut qu'il fallait faire séparément le même travail pour les
@@ -445,7 +483,7 @@ qui demandait bien moins de connaissances sur notre domaine.
 \subsubsection{Conclusion}
 Plutôt que de calculer $\overbrace{d(d(d(\dots}^\text{$n$ fois} x)))$,
 on calcule $\left(d^n\right)(x)$ en manipulant la fonction. Le résultat est le
-même que de calculer les (nombreux) résultats intermédiaires, c'est seulement
+même que de calculer les (nombreux) résultats intermédiaires mais c'est bien
 plus rapide.
 
 \subsection{Cycles à supports disjoints}
