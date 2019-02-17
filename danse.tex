@@ -142,13 +142,21 @@ Il se peut qu'il ne soit pas nécessaire de calculer $u_{1000000000}$ : \[
 
 \section{Profilage}
 Un \emph{profiler} permet (entre autres) de connaître la proportion de temps
-passé dans une partie d'un programme. Voici ce qu'il a fourni comme résultat :
-\marginpar{gros bluff}
+passé dans une partie d'un programme en inspectant régulièrement l'état d'un
+programme. Voici ce qu'il nous a appris :
 \begin{itemize}
 \item \texttt{partner} passe beaucoup de temps à chercher où se trouvent les
 	caractères à intervertir.
 \item \texttt{spin} modifie toujours chaque case du tableau.
 \end{itemize}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\linewidth]{cpu-bash-flamegraph.png}
+	\caption{\emph{Flame graph} créé par
+	\url{https://github.com/brendangregg/FlameGraph}}
+	\label{fig:flamegraph}
+\end{figure}
 
 \section{Sur un cercle}
 Imaginons maintenant que les danseurs se trouvent sur un cercle.
