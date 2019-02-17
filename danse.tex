@@ -124,7 +124,7 @@ tout ce temps. S'il se trompe, il sera exécuté, lui et toute sa famille.
 
 Exercice : combien de temps nous faudrait-il pour simuler ça ?
 
-\section{Suite}
+\section{Suite}\label{sec:suite}
 Si on écrit $d(x)$ le résultat de la danse $d$ sur les positions des danseurs
 $x$, les positions à la fin de chaque danse peuvent être modélisées à l'aide
 d'une suite :\[
@@ -383,6 +383,10 @@ $\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini
 %FIXME détailler ?
 	\forall f\in S_n, \exists k\in \mathbb{N} \quad f^k=id
 \]
+
+Ce groupe correspond à la suite qu'on a construite en \ref{sec:suite} et cette
+propriété nous fournit une version spécialisée de l'algorithme du lièvre et de
+la tortue qui calcule l'ordre de $f$.
 %TODO sous-groupe ? pas utile je crois
 
 On a déjà écrit plus haut qu'il fallait faire ce travail séparément pour les
@@ -405,9 +409,10 @@ Calculer l'effet de la répétition d'une danse peut se faire <<~en une fois~>>
 grâce au même algorithme sur ce nouveau groupe.
 
 On peut prouver que le produit direct de deux groupes cycliques forme un groupe
-cyclique, ce qui motive l'algorithme du lièvre et de la tortue présenté
-précédemment (mais qui demandait bien moins de connaissances sur notre domaine).
-%TODO le faire ?
+cyclique, ce qui motive notre première implémentation de l'algorithme du lièvre
+et de la tortue présenté en \ref{sec:suite}
+qui demandait bien moins de connaissances sur notre domaine.
+%TODO le faire et parler de ppcm, enfin utile ? étendre au CRT ?
 
 %TODO énoncé Lagrange et sa conséquence : son ordre divise celui de $S_n$
 %TODO comprendre https://math.stackexchange.com/questions/2304763/longest-cycle-of-permutation-of-n-elements
