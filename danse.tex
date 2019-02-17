@@ -144,11 +144,14 @@ Il se peut qu'il ne soit pas nécessaire de calculer $u_{1000000000}$ : \[
 \]
 
 Puisque $i<j \iff \exists k \in \mathbb{N}_0 : j=i+k$, on peut éliminer les
-tours inutiles (voir figure \ref{fig:cycle}) : \[
+tours inutiles (voir figure \ref{fig:cycle}) :
+\marginpar{Euclide}
+\[
 	\exists i \in \mathbb{N}, k \in \mathbb{N}_0 \quad
 	u_i=u_{i+k} \implies
 	\left(\forall n \geq i : u_n=u_{i+(n-i)\text{ mod } k}\right)
 \]
+%FIXME?
 
 \begin{figure}[ht]
 	\centering
