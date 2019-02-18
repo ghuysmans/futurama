@@ -534,15 +534,19 @@ formule sur le Rubik's Cube s'annulera (si on oublie la parité, mais c'est une
 autre histoire !).
 \marginpar{groupe compliqué}
 
-\section{Autre application} %FIXME further work???
+\section{Réduction} %FIXME pas vraiment further work...
 On vous demande d'optimiser des programmes de cette forme et d'éliminer les
 affectations simultanées en utilisant le moins de variables temporaires
 possible :
 %TODO bricoler un compilateur à partir d'une danse (pos ou persos)
 \begin{verbatim}
 a, b, c, d = d, b, a, c
+b, c, a, d = b, a, c, d
+a, b, c, d = b, c, d, a
+(...)
 \end{verbatim}
 
-%TODO fils de couleur ? rendre ça original sinon juste permutation
+Question :
+comment pouvez-vous réduire ce problème à celui qu'on vient de résoudre ?
 
 \end{document}
