@@ -431,9 +431,14 @@ Si on particularise l'algorithme à notre groupe $S_n$, on trouve : \[
 \]
 
 $\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini
-et donc \emph{cyclique} d'ordre $k$ par le principe des tiroirs : \[
+et donc \emph{cyclique} d'ordre $k$
+\marginpar{quasi $f^t=f$, prenons $t=k+1$}
+par le principe des tiroirs :
+\[
 %FIXME schématiser ?
-	\forall f\in S_n, \exists k\in \mathbb{N} \quad f^k=id
+	\forall f\in S_n, \exists k\in \mathbb{N} \quad
+		%f^k=id
+		k=\min\{k\mid f^k=id\}
 \]
 
 Ce groupe correspond à la suite qu'on a construite en \ref{sec:suite} et cette
