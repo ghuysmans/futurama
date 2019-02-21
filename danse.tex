@@ -13,6 +13,7 @@
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{wrapfig}
+\input{faded.tex}
 
 %FIXME mettre en évidence les définitions et propriétés ?
 %FIXME pour les mathématiciens, donner de quoi le faire à la main : à partir de
@@ -21,8 +22,21 @@
 \title{Dansez maintenant !}
 \author{Guillaume \textsc{Huysmans}}%, Quentin \textsc{Carpentier}}
 \begin{document}
-\maketitle
-%FIXME cigale et la fourmi comme couverture !!
+%https://tex.stackexchange.com/questions/357769/add-a-picture-before-book-title
+
+\vbox{
+	\centering
+	\maketitle
+	%\includegraphics[width=0.8\linewidth]{cigale-fourmi.jpg}
+	\begin{tikzpicture}
+		\node[anchor=south west,inner sep=0] (image) at (0,0) {
+			\includegraphics[width=0.8\linewidth]{cigale-fourmi.jpg}
+		};
+		\framenode[15pt]{image}
+	\end{tikzpicture}
+}
+\marginpar{Illustration réalisée il y a longtemps par Jean Ignace Isidore Gérard Grandville (1803--1847)}
+\clearpage
 \emph{Le problème décrit ici dérive d'Advent of Code
 \footnote{\url{https://adventofcode.com/2017/day/16}},
 un calendrier de l'Avent avec
