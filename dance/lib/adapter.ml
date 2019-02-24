@@ -1,11 +1,11 @@
-module type Morphism = sig
+module type Isomorphism = sig
   type i
   type j
   val f: i -> j
   val f': j -> i
 end
 
-module Adapt (I: Group.S) (M: Morphism with type j = I.i) :
+module Adapt (I: Group.S) (M: Isomorphism with type j = I.i) :
        Group.S with type i = M.i = struct
   type i = M.i
   type t = I.t
@@ -34,7 +34,7 @@ module Char (I: sig val from: char end) = struct
 end
 
 module Named (E: sig type t val elements: t array end) :
-       Morphism with type i = E.t and type j = int = struct
+       Isomorphism with type i = E.t and type j = int = struct
   type i = E.t
   type j = int
   let h =
