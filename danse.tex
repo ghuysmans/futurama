@@ -414,10 +414,10 @@ Si on particularise l'algorithme à notre groupe $S_n$, on trouve : \[
 	\end{array}\right.
 \]
 
-$\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini
-et donc \emph{cyclique} d'ordre $k$
+%$\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini.
+En vertu du principe des tiroirs,
+tout élément d'un groupe fini est d'ordre $k$ fini :
 \marginpar{quasi $f^t=f$, prenons $t=k+1$}
-par le principe des tiroirs :
 \[
 %FIXME schématiser ?
 	\forall f\in S_n, \exists k\in \mathbb{N} \quad
@@ -473,8 +473,8 @@ $d\in S_{16}\times S_{16}$.
 Calculer l'effet de la répétition d'une danse peut se faire <<~en une fois~>>
 grâce au même algorithme sur ce nouveau groupe.
 
-On peut prouver que le produit direct de deux groupes cycliques forme un groupe
-cyclique, ce qui motive notre première implémentation de l'algorithme du lièvre
+La propriété sur l'ordre des éléments de ce nouveau groupe fini
+motive notre première implémentation de l'algorithme du lièvre
 et de la tortue présenté en \ref{sec:suite}
 qui demandait bien moins de connaissances sur notre domaine.
 %TODO le faire et parler de ppcm, enfin utile ? étendre au CRT ?
