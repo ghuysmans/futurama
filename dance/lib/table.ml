@@ -1,30 +1,34 @@
-type t = int array
-type i = int
+module Make (I: sig val n: int end) = struct
+  let n = I.n
 
-let make order =
-  Array.init order (fun i -> i)
+  type t = int array
+  type i = int
+  let int_of_i i = i
 
-let equal = (=)
+  let make () =
+    Array.init I.n (fun i -> i)
 
-let order = Array.length
+  let equal = (=)
 
-let get = Array.get
+  let get = Array.get
 
-let map = Array.map
+  let iter = Array.iteri
 
-let update a = function
-  | Group.Operation.Transpose (i, j) ->
-    let tmp = a.(i) in
-    a.(i) <- a.(j);
-    a.(j) <- tmp
-  | Rotate n ->
-    let len = Array.length a in
-    let tmp = Array.init len (fun i -> a.((i + n) mod len)) in
-    Array.blit tmp 0 a 0 len
+  let update a = function
+    | Permutation.Operation.Transpose (i, j) ->
+      let tmp = a.(i) in
+      a.(i) <- a.(j);
+      a.(j) <- tmp
+    | Rotate n ->
+      let tmp = Array.init I.n (fun i -> a.((i + n) mod I.n)) in
+      Array.blit tmp 0 a 0 I.n
 
-let inv t =
-  let arr = Array.make (Array.length t) (-1) in
-  Array.iteri (fun i v -> arr.(v) <- i) t;
-  arr
+  let inv t =
+    let arr = Array.make I.n (-1) in
+    Array.iteri (fun i v -> arr.(v) <- i) t;
+    arr
 
-let to_array t = t
+  let to_array t = t
+
+  let (@) g f = Array.map (Array.get g) f
+end

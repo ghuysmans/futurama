@@ -1,2 +1,4 @@
-include Group.S with type i = int
-val to_array: t -> int array
+module Make: functor (S: sig val n: int end) -> sig
+  include Permutation.S with type i = int
+  val to_array: t -> int array
+end

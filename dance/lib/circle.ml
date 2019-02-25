@@ -1,44 +1,53 @@
-(* beware, structural equality isn't enough anymore *)
-type t = {
-  arr: int array;
-  mutable ofs: int;
-}
+module Make (I: sig val n: int end) = struct
+  let n = I.n
 
-type i = int
+  (* beware, structural equality isn't enough anymore *)
+  type t = {
+    arr: int array;
+    mutable ofs: int;
+  }
 
-let make order = {
-  arr = Array.init order (fun i -> i);
-  ofs = 0;
-}
+  type i = int
+  let int_of_i i = i
 
-let get {arr; ofs} i =
-  arr.((i + ofs) mod Array.length arr)
+  let make () = {
+    arr = Array.init I.n (fun i -> i);
+    ofs = 0;
+  }
 
-let map f t = {
-  arr = Array.init (Array.length t.arr) (fun i -> f (get t i));
-  ofs = 0;
-}
+  let get {arr; ofs} i =
+    arr.((i + ofs) mod I.n)
 
-let to_array t =
-  (map (fun x -> x) t).arr
+  let iter f {arr; ofs} =
+    (* FIXME test this *)
+    Array.iteri (fun i i' -> f ((I.n + (i - ofs) mod I.n) mod I.n) i') arr
 
-let equal t u =
-  to_array t = to_array u
+  let map f t = {
+    arr = Array.init I.n (fun i -> f (get t i));
+    ofs = 0;
+  }
 
-let order {arr; _} = Array.length arr
+  let to_array t =
+    (map (fun x -> x) t).arr
 
-let set {arr; ofs} i v =
-  arr.((i + ofs) mod Array.length arr) <- v
+  let equal t u =
+    to_array t = to_array u
 
-let update t = function
-  | Group.Operation.Transpose (i, j) ->
-    let tmp = get t i in
-    set t i (get t j);
-    set t j tmp
-  | Rotate n ->
-    t.ofs <- t.ofs + n
+  let set {arr; ofs} i v =
+    arr.((i + ofs) mod I.n) <- v
 
-let inv t =
-  let arr = Array.make (Array.length t.arr) (-1) in
-  Array.iteri (fun i _ -> arr.(get t i) <- i) t.arr;
-  {arr; ofs = 0}
+  let update t = function
+    | Permutation.Operation.Transpose (i, j) ->
+      let tmp = get t i in
+      set t i (get t j);
+      set t j tmp
+    | Rotate n ->
+      t.ofs <- t.ofs + n
+
+  let inv t =
+    let arr = Array.make I.n (-1) in
+    Array.iteri (fun i _ -> arr.(get t i) <- i) t.arr;
+    {arr; ofs = 0}
+
+  let (@) g f = map (get g) f
+end

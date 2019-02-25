@@ -5,22 +5,26 @@ module type Isomorphism = sig
   val f': j -> i
 end
 
-module Adapt (I: Group.S) (M: Isomorphism with type j = I.i) :
-       Group.S with type i = M.i = struct
+module Adapt (I: Permutation.S) (M: Isomorphism with type j = I.i) :
+       Permutation.S with type i = M.i = struct
+  let n = I.n
+
   type i = M.i
+  let int_of_i i = I.int_of_i (M.f i)
+
   type t = I.t
 
   let make = I.make
   let equal = I.equal
-  let order = I.order
   let get t i = M.f' (I.get t (M.f i))
-  let map f t = I.map (fun j -> M.f (f (M.f' j))) t
+  let iter f = I.iter (fun i i' -> f (M.f' i) (M.f' i'))
   let inv = I.inv
+  let (@) = I.(@)
 
   let update t o =
     I.update t (
       match o with
-      | Group.Operation.Transpose (x, y) -> Transpose (M.f x, M.f y)
+      | Permutation.Operation.Transpose (x, y) -> Transpose (M.f x, M.f y)
       | Rotate _ as r -> r
     )
 end
