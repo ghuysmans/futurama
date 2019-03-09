@@ -1,28 +1,29 @@
+type move =
+  | Spin of int
+  | Exchange of int * int
+  | Partner of char * char
+
+exception Invalid_move of string
+
+let read_move () =
+  match Scanf.scanf "%c" (fun x -> x) with
+  | 's' -> Scanf.scanf "%d" (fun x -> Spin x)
+  | 'x' -> Scanf.scanf "%d/%d" (fun x y -> Exchange (x, y))
+  | 'p' -> Scanf.scanf "%c/%c" (fun x y -> Partner (x, y))
+  | c -> failwith @@ Printf.sprintf "unexpected character %c" c
+
+let read_moves () =
+  let rec f acc =
+    Scanf.scanf "%c" (function
+      | ',' -> f (read_move () :: acc)
+      | '\n' -> List.rev acc
+      | _ -> failwith "comma expected"
+    )
+  in
+  f [read_move ()]
+
+
 module Simulation = struct
-  type move =
-    | Spin of int
-    | Exchange of int * int
-    | Partner of char * char
-
-  exception Invalid_move of string
-
-  let read_move () =
-    match Scanf.scanf "%c" (fun x -> x) with
-    | 's' -> Scanf.scanf "%d" (fun x -> Spin x)
-    | 'x' -> Scanf.scanf "%d/%d" (fun x y -> Exchange (x, y))
-    | 'p' -> Scanf.scanf "%c/%c" (fun x y -> Partner (x, y))
-    | c -> failwith @@ Printf.sprintf "unexpected character %c" c
-
-  let read_moves () =
-    let rec f acc =
-      Scanf.scanf "%c" (function
-        | ',' -> f (read_move () :: acc)
-        | '\n' -> List.rev acc
-        | _ -> failwith "comma expected"
-      )
-    in
-    f [read_move ()]
-
   let rec step a = function
     | Spin i ->
       let l = String.length a - i in
