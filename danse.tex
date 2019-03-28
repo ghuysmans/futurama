@@ -4,7 +4,7 @@
 
 \title{Dansez maintenant !}
 \author{Guillaume \textsc{Huysmans}}%, Quentin \textsc{Carpentier}}
-\date{26 février 2019}
+\date{28 mars 2019}
 \begin{document}
 %https://tex.stackexchange.com/questions/357769/add-a-picture-before-book-title
 
@@ -71,12 +71,12 @@ Par groupes, travaillez sur ces exercices :
 \begin{enumerate}
 \item \emph{Décrivez} l'étape nécessaire au fonctionnement de \texttt{partner}.
 	\emph{Écrivez} sa déclaration.
-\item \emph{Complétez} ces schémas puis \emph{implémentez} ces pas en Pascal :
+\item \emph{Complétez} ces schémas puis \emph{implémentez} ces pas :
 	\marginpar{cases vides !!}
 	\begin{enumerate}
-	\item \boxes \texttt{procedure spin(n: 1..15);}
-	\item \boxes \texttt{procedure exchange(i, j: 0..15);}
-	\item \boxes \texttt{procedure partner(a, b: 'A'..'P');}
+	\item \boxes \texttt{spin($n\in\{1\dots15\}$)}
+	\item \boxes \texttt{exchange($i, j\in\{0\dots15\}$)}
+	\item \boxes \texttt{partner($a, b\in\{A\dots P\}$)}
 	\end{enumerate}
 \item \emph{Simulez} les étapes successives de cette danse :
 \marginpar{couleurs dans leur dos pour ne pas les voir direct'}
@@ -261,7 +261,7 @@ Changeons totalement notre manière de voir les choses : puisqu'on peut échange
 séparément les personnages, on peut utiliser un tableau indicé
 \marginpar{structure $\neq$ de celle employée par la simulation
 	pour ne pas confondre}
-par un personnage (\texttt{subst: array['A'..'P'] of 'A'..'P'}) afin d'associer
+par un personnage afin d'associer
 à chacun celui avec lequel il a été échangé.
 Le tableau ne stocke plus où se trouvent les personnages mais décrit
 comment les échanger.
