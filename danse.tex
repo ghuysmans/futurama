@@ -2,35 +2,42 @@
 %FIXME pour les mathématiciens, donner de quoi le faire à la main : à partir de
 %la séparation, montrer le paquet et donner le résumé qu'ils utiliseront
 
-\title{Dansez maintenant !}
+\title{Les tableaux}
 \author{Guillaume \textsc{Huysmans}}%, Quentin \textsc{Carpentier}}
-\date{28 mars 2019}
+\date{2 décembre 2019}
 \begin{document}
-%https://tex.stackexchange.com/questions/357769/add-a-picture-before-book-title
+\maketitle
 
-\vbox{
-	\centering
-	\maketitle
-	%\includegraphics[width=0.8\linewidth]{cigale-fourmi.jpg}
-	\begin{tikzpicture}
-		\node[anchor=south west,inner sep=0] (image) at (0,0) {
-			\includegraphics[width=0.8\linewidth]{cigale-fourmi.jpg}
-		};
-		\framenode[15pt]{image}
-	\end{tikzpicture}
-}
-\marginpar{Illustration réalisée il y a longtemps par Jean Ignace Isidore Gérard Grandville (1803--1847)}
-\clearpage
+\begin{teacheronly}
+\section*{Programme}
+\subsection*{Compétences de 3TT en FWB}
+\begin{tabular}{l|l}
+10.1 & Analyser une situation-problème et
+	modéliser la solution sous forme d'algorithme \\
+10.5 & Traduire une opération, une fonction en langage de programmation \\
+10.6 & Écrire un programme utilisant des séquences alternatives, répétitives \\
+10.7 & Construire un programme modulaire \\
+10.8 & Manipuler les tableaux
+\end{tabular}
+\subsection*{Prérequis}
+J'ai déjà abordé la récursivité avec mes élèves lors d'une séance sur les tours
+de Hanoï. Je les fais habituellement jongler entre deux notations : le
+pseudo-code et le langage choisi en classe (ici, j'ai pris Python mais je ne
+suis pas encore fixé).
+\end{teacheronly}
+
+\section{Introduction}
+
 \emph{Le problème décrit ici dérive d'Advent of Code
 \footnote{\url{https://adventofcode.com/2017/day/16}},
 un calendrier de l'Avent avec
-des problèmes algorithmiques au lieu de chocolats.}
-\marginpar{le dire !}
+des problèmes algorithmiques au lieu de chocolats. Si vous en avez le courage,
+essayez d'y participer cette année !}
 
 Une société de petits personnages adore la danse. Chaque année, pour Noël, ils
 organisent une grande fête à laquelle leur Grande Reine Vénérée participe. Sa
-Majesté n'autorise pas tout et n'importe quoi : seules les danses qui La font
-commencer et finir à la première place sont permises.
+Majesté n'autorise pas tout et n'importe quoi : \tbold{seules les danses qui La
+font commencer et finir à la première place sont permises.}
 Si elle finit à une autre place, le
 chorégraphe est exécuté. C'est ce qui est arrivé au chorégraphe de la Cour
 l'année passée : il faut dire qu'avec son grand âge, il n'avait déjà plus toute
@@ -40,75 +47,204 @@ chose de grandiose s'il veut faire oublier l'erreur de son père et profiter de
 ses cadeaux sous le sapin.
 Le problème, c'est qu'il a laissé tomber ses papiers quelques
 jours avant Noël et qu'il avait oublié de les numéroter.
-Il a presque réussi à les remettre dans l'ordre mais il hésite entre deux
-possibilités et il n'a plus le temps de les essayer.
+Il a presque réussi à les remettre dans l'ordre mais \tbold{il hésite entre
+deux possibilités} et il n'a plus le temps de \tbold{les essayer}.
 
-Ils commencent dans l'ordre ($A\dots P$) et enchaînent trois types de pas :
+Ils commencent dans l'ordre (${A\dots P}$) et enchaînent deux types de pas :
 \begin{itemize}
-\item \texttt{spin} $n$ ($\forall n \in \{1\dots15\}$) :
+\item \tbold{\texttt{spin}} $n$ ($\forall n \in \{1\dots15\}$) :
 	\marginpar{expliquer la notation : $\forall x \in E$...}
-	les $n$ derniers viennent devant les premiers. \\
-	Par exemple, \texttt{spin 1} sur \texttt{DACB} donne \texttt{BDAC}.
-\item \texttt{exchange} $i$ $j$ ($\forall i,j \in \{0\dots15\}$) :
+	les \tbold{$n$ derniers} viennent devant les premiers. \\
+	Par exemple, \texttt{spin 3} sur \texttt{DACB} donne \texttt{ACBD}.
+\item \tbold{\texttt{exchange}} $i$ $j$ ($\forall i,j \in \{0\dots15\}$) :
 	ceux en $i$ et $j$ échangent leur place. \\
 	Par exemple, \texttt{exchange 0 2} sur \texttt{CBDA} donne \texttt{DBCA}.
-\item \texttt{partner} $a b$ ($\forall a,b \in \{A\dots P\}$) :
-	$a$ et $b$ échangent leur place.
-	\marginpar{ne pas confondre} \\
-	Par exemple, \texttt{partner A D} sur \texttt{DBAC} donne \texttt{ABDC}.
 \end{itemize}
 
-\chapter{Simulation}\label{ch:sim}
-%\section{Exploration}
-Pour simplifier nos exemples, nous commencerons avec seulement quatre couleurs
-(pour quatre personnages).
-\newcommand{\boxes}{
+\begin{exo}
+\emph{Surlignez} les mots importants de l'histoire ci-dessus.
+\end{exo}
+
+Avec ce que nous avons déjà vu, il serait possible d'utiliser une variable par
+case, donc deux fonctions avec plusieurs conditions suffiraient pour y lire et
+y écrire mais ça devient vite pénible\footnote{Déjà avec 16 personnages...}.
+
+Soient les variables $v_0, v_1, v_2\dots v_{15} \in\{A\dots P\}$.
+
+\begin{exo}
+\emph{Complétez} l'algorithme naïf \texttt{lire}$(i\in\{0\dots15\})$ :
+\begin{enumerate}
+\item si \pbox{$i=0$} alors retourner \pbox{$v_0$}
+\item sinon, si \pbox{$i=1$} alors retourner \pbox{$v_1$}
+\item sinon, si \pbox{$i=2$} alors retourner \pbox{$v_2$}
+\item etc.
+\end{enumerate}
+\end{exo}
+
+\begin{exo}
+\emph{Complétez} l'algorithme naïf \texttt{écrire}$(i\in\{0\dots15\}, x)$ :
+\begin{enumerate}
+\item si \pbox{$i=0$} alors
+	\pbox{$v_0$} $\leftarrow$ \pbox{$x\phantom{_0}$}
+\item sinon, si \pbox{$i=1$} alors
+	\pbox{$v_1$} $\leftarrow$ \pbox{$x\phantom{_0}$}
+\item sinon, si \pbox{$i=2$} alors
+	\pbox{$v_2$} $\leftarrow$ \pbox{$x\phantom{_0}$}
+\item etc.
+\end{enumerate}
+\end{exo}
+
+Remarquez que les \emph{indices} commencent à zéro !
+\begin{exo}
+\emph{Déterminez} l'indice du dernier élément d'un tableau de
+$n\in\mathbb{N}_0$ éléments.
+\end{exo}
+
+Tout ce dont nous avons besoin, c'est d'accéder à la $i$ème variable.
+Un tableau de $n\in\mathbb{N}$ éléments de type $\alpha$ est une
+\emph{structure de données} qui permet précisément de le faire.
+Cette structure propose deux opérations :
+\begin{itemize}
+\item \texttt{get}$(i\in\pbox{$\{0\dots n-1\}$}) : \alpha$ renvoie le $i$ème
+	\marginpar{sens particulier de $\{0\dots n-1\}$}
+	élément du tableau. \\
+	En Python : \texttt{t[i]}
+\item \texttt{set}$(i\in\pbox{$\{0\dots n-1\}$}, x\in\alpha)$ remplace le
+	$i$ème élément par $x$ et ne renvoie rien. \\
+	En Python : \texttt{t[i] = x}
+\end{itemize}
+
+Nous adopterons une notation graphique pour les représenter, même si \emph{un
+programme ne verra pas (contrairement à nous) directement où se trouve chaque
+élément} :
+\marginpar{couleurs dans leur dos pour ne pas les voir direct'}
+\newcommand{\boxes}[4]{
 	$\begin{array}{|l|l|l|l|}\hline
-	\phantom{a} & \phantom{a} & \phantom{a} & \phantom{a} \\ \hline
+	\ptonly{#1} & \ptonly{#2} & \ptonly{#3} & \ptonly{#4} \\ \hline
 	\end{array}$
 }
-Par groupes, travaillez sur ces exercices :
+\newcommand{\emptyboxes}{
+	\boxes{\phantom{a}}{\phantom{a}}{\phantom{a}}{\phantom{a}}
+}
+\begin{equation*}
+	\texttt{['a', 'b', 'c', 'd']} \equiv
+	\begin{array}{|l|l|l|l|}\hline
+		a & b & c & d \\ \hline
+	\end{array}
+\end{equation*}
+
+En Python\footnote{Ce n'est pas vrai dans tous les langages de programmation.},
+un tableau peut changer de taille au cours de l'exécution du programme :
+\begin{itemize}
+\item \texttt{[]} est un \emph{nouveau} tableau vide.
+	\marginpar{sinon plus possible d'utiliser \texttt{[]}
+	après \texttt{[].append}}
+\item \texttt{t.append(x)} ajoute un élément à la fin de \texttt{t}.
+\item \texttt{len(t)} retourne la longueur de $t$.
+\end{itemize}
+Cependant, faites attention aux indices ! Si vous accédez à un indice qui
+n'existe pas, votre programme pourrait se planter. Ou pire.
+
+\begin{exo}[Bonus]
+\emph{Demandez} à Python si \texttt{[] is []} est vrai,
+puis \emph{essayez} avec des nombres...
+\end{exo}
+
+\begin{exo}
+\emph{Tapez} les instructions suivantes dans le
+REPL\footnote{\emph{Read-Eval-Print Loop}} et
+\emph{expliquez} chaque résultat :
 \begin{enumerate}
-\item \emph{Décrivez} l'étape nécessaire au fonctionnement de \texttt{partner}.
-	\emph{Écrivez} sa déclaration.
-\item \emph{Complétez} ces schémas puis \emph{implémentez} ces pas :
+	\item \texttt{t = []} \tonly{crée un tableau vide}
+		\hfill \boxes ////
+	\item \texttt{print(t[0])} \tonly{lève une \texttt{IndexError}}
+	\item \texttt{t.append(2)}
+		\hfill \boxes 2///
+	\item \texttt{print(t[0])} \tonly{affiche 2, le premier élément}
+	\item \texttt{print(t[-1])} \tonly{devrait les surprendre}
+	\item \texttt{t.append(4)}
+		\hfill \boxes 24//
+	\item \texttt{print(t[-1])} \tonly{affiche 4, le dernier élément}
+	\item \texttt{t.append(6)}
+		\hfill \boxes 246/
+	\item \texttt{t.append(8)}
+		\hfill \boxes 2468
+	\item \texttt{print(t[-2])} \tonly{affiche 6, l'avant-dernier élément}
+	\item \texttt{print(t[1.5])} \tonly{lève une \texttt{TypeError}}
+\end{enumerate}
+\end{exo}
+
+\section{Simulation}
+Pour simplifier, limitons-nous à 4 personnages
+représentés par quatre lettres.
+
+\begin{exo}\label{ex:sim}
+\emph{Simulez} les étapes successives de cette danse :
+	\begin{enumerate}%[label=\alph*.]
+	\item (positions initiales) \hfill \boxes abcd
+	\item \texttt{spin 3} \hfill \boxes bcda
+	\item \texttt{exchange 0 1} \hfill \boxes cbda
+	\item \texttt{spin 1} \hfill \boxes acbd
+	\item \texttt{exchange 2 3} \hfill \boxes acdb
+	\end{enumerate}
+\end{exo}
+
+\begin{exo}
+\emph{Complétez} ces schémas puis \emph{implémentez} \texttt{exchange} :
 	\marginpar{cases vides !!}
-	\begin{enumerate}
-	\item \boxes \texttt{spin($n\in\{1\dots15\}$)}
-	\item \boxes \texttt{exchange($i, j\in\{0\dots15\}$)}
-	\item \boxes \texttt{partner($a, b\in\{A\dots P\}$)}
+\begin{multicols}{2}
+	\begin{enumerate}[label=]
+	\item \emptyboxes \texttt{spin$(n\in\{1\dots4\})$}
+	\item \emptyboxes \texttt{exchange$(i, j\in\{0\dots3\})$}
 	\end{enumerate}
-\item \emph{Simulez} les étapes successives de cette danse :
-\marginpar{couleurs dans leur dos pour ne pas les voir direct'}
-	\begin{enumerate}
-	%FIXME indices !! surtout pas confondre avec ce qu'on fera plus loin
-	\item \boxes \boxes (positions initiales)
-	\item \boxes \boxes \texttt{spin 3}
-	\item \boxes \boxes \texttt{partner B D}
-	\item \boxes \boxes \texttt{exchange 0 1}
-	\item \boxes \boxes \texttt{spin 1}
-	\item \boxes \boxes \texttt{exchange 2 3} \label{sim:last}
-	\end{enumerate}
-\item En permutant deux pas, le résultat change...
+\end{multicols}
+\end{exo}
+
+\begin{exo}
+En permutant deux pas, le résultat change...
 	(\emph{entourez et justifiez} la bonne réponse) :
 	\begin{enumerate}
-		\item toujours ? \marginpar{$x_{01}\circ x_{23}$}
-		\item jamais ? \marginpar{$x_{01}\circ x_{12}$}
-		\item parfois ?
+		\item toujours ?
+			\tonly{$x_{01}\circ x_{23}=x_{23}\circ x_{01}\equiv$\boxes badc}
+			\marginpar{détailler une fois au tableau}
+		\item jamais ?
+			\tonly{$x_{01}\circ x_{12}\equiv$\boxes cabd$\ne$
+			\boxes bcad$\equiv x_{12}\circ x_{01}$}
+		\item parfois ? \tonly{parce qu'on a contredit les deux précédentes !}
 	\end{enumerate}
-\item \emph{Vrai ou faux ? Expliquez. }
-	<<~En partant de (\ref{sim:last}), les personnages se déplaceront encore de
-	la même manière s'ils entament une deuxième fois la même danse.~>>
-	\marginpar{$p_{AC}\circ x_{01}$}
-\item Schématisez une manière d'aider notre chorégraphe favori.
-\end{enumerate}
+\end{exo}
 
-\chapter{Optimisations}
-Grâce à vous, Noël s'est bien passé, notre ami a survécu.
+\begin{exo}
+Schématisez une manière d'aider notre chorégraphe favori.
+\begin{enumerate}
+\item \tonly{Exécuter la première possibilité.}
+\item \tonly{Tester \texttt{t[-1] == 'a'}.}
+\item \tonly{Si c'est vrai, c'est la bonne, sinon, c'est l'autre.}
+\end{enumerate}
+\end{exo}
+
+Remarquez qu'aucun personnage ne peut disparaître du tableau.
+\begin{exo}
+\emph{Écrivez} l'algorithme
+\texttt{trouve}$(i\in\{0\dots15\}, x\in\{A\dots P\})$ qui retrouve la position
+d'un personnage dans notre simulation en commençant par la $i$ème case.
+\begin{enumerate}
+\item \tonly{Si \texttt{t[i] == x}, retourner $i$.}
+\item \tonly{Sinon, poursuivre la recherche à partir de l'indice $i+1$.}
+\end{enumerate}
+\end{exo}
+\begin{exo}[Préparation]
+	\emph{Expliquez} comment corriger une danse. \marginpar{\texttt{exchange}}
+\end{exo}
+
+\section{Optimisations}
+\begin{comment}
+Grâce à vous, Noël se passera bien pour notre ami.
 Il nous doit une \emph{reconnaissance éternelle}
 mais il a encore un <<~petit quelque chose~>> à nous demander.
 
-Sa~Majesté se lasse de tout ça et a décidé de changer les règles :
+Il a entendu dire que
+Sa~Majesté se lassait de tout ça et qu'elle avait décidé de changer les règles :
 pendant le prochain milliard d'années (ils vivent tous très longtemps mais la
 principale cause de mortalité est la décapitation), l'Élu
 (qu'Elle essaiera de ne pas exécuter entre-temps, Elle fera un effort)
@@ -120,10 +256,9 @@ La danse ne changera pas (quel intérêt si Elle ne regarde pas ?).
 Le chorégraphe doit maintenant prédire la position exacte des danseurs après
 tout ce temps. S'il se trompe, il sera exécuté, lui et toute sa famille.
 %Son règne n'est pas près de s'arrêter : Sa~Majesté est immortelle.
+\end{comment}
 
-Exercice : combien de temps nous faudrait-il pour simuler ça ?
-
-\section{Suite}\label{sec:suite}
+\subsection{Périodicité}
 Si on écrit $d(x)$ le résultat de la danse $d$ sur les positions des danseurs
 $x$, les positions à la fin de chaque danse peuvent être modélisées à l'aide
 d'une suite :\[
@@ -134,25 +269,8 @@ d'une suite :\[
 	\end{array}\right.
 \]
 
-Il se peut qu'il ne soit pas nécessaire de calculer $u_{1000000000}$ : \[
-	\exists i<j \in \mathbb{N} \quad
-	u_i=u_j \implies
-	\left(\forall n \geq j : u_n=u_{n-j+i}\right)
-	%\left(\forall n \in \mathbb{N} : n\geq j \implies d_n=d_{n-(j-i)}\right)
-\]
-
-Puisque $i<j \iff \exists k \in \mathbb{N}_0 : j=i+k$, on peut éliminer les
-tours inutiles (voir figure \ref{fig:cycle}) :
-\marginpar{Euclide}
-\[
-	\exists i \in \mathbb{N}, k \in \mathbb{N}_0 \quad
-	u_i=u_{i+k} \implies
-	\left(\forall n \geq i : u_n=u_{i+(n-i)\text{ mod } k}\right)
-\]
-%FIXME?
-
-\begin{figure}[ht]
-	\centering
+\emph{Il se peut} qu'il ne soit pas nécessaire de calculer $u_{1000000000}$ :
+\begin{center}
 	\begin{tikzpicture}[node distance=1.5cm]
 		\node (0) {$u_0$};
 		\node (1) [right of=0] {$u_1$};
@@ -168,7 +286,7 @@ tours inutiles (voir figure \ref{fig:cycle}) :
 		\draw (2) edge[->] node [above,midway] {$\dots$} (i);
 		\draw (i) edge[->] node [above,midway] {$d$} (i+1);
 		\draw (i+1) edge[->] node [above,midway] {$d$} (i+2);
-		\draw (i+2) edge[->,bend left] node [below,midway] {$\dots$} (i);
+		\draw (i+2) edge[->,bend left] node [below,midway] {} (i);
 		%\draw (j) edge[->] node [above,midway] {$d$} (j+1);
 		%\draw (j+1) edge[->] node [above,midway] {$d$} (j+2);
 		%\draw (j+2) edge[->,bend right] node [above,midway] {$\dots$} (j);
@@ -176,58 +294,47 @@ tours inutiles (voir figure \ref{fig:cycle}) :
 		\draw (i+1) edge[double equal sign distance] (j+1);
 		\draw (i+2) edge[double equal sign distance] (j+2);
 	\end{tikzpicture}
-	\caption{Suite périodique}
-	\label{fig:cycle}
-\end{figure}
+\end{center}
 
-En pratique, la période $k$ peut être assez longue, c'est pourquoi on ne
-stockera pas toutes les valeurs en mémoire. La \emph{conclusion} de cette
-implication nous donne une façon de calculer $u_n$ quand $n\geq i$ (on espère
-que $i\ll n$...) mais nous avons besoin de calculer $k$ et $i$.
+\begin{exo}
+À partir du dessin, \emph{déduisez} $k$, la période de la danse.
+\begin{equation*}
+k=\pbox{2+1=3}
+\end{equation*}
+\end{exo}
 
-Ce problème a déjà été étudié en théorie des graphes (un graphe est un ensemble
-de \emph{points} ou \emph{noeuds} reliés par \emph{arêtes})
+En pratique, la période pourrait être assez longue, c'est pourquoi \emph{on ne
+stockera pas toutes les valeurs en mémoire}.
+Ce problème a déjà été étudié %en théorie des graphes (un graphe est un ensemble
+%de \emph{points} ou \emph{noeuds} reliés par \emph{arêtes})
+par des mathématiciens
 et nous allons redécouvrir l'\emph{algorithme du lièvre et de la tortue}.
 
-\section{Profilage}
-Un \emph{profiler} permet (entre autres) de connaître la proportion de temps
-passé dans une partie d'un programme en inspectant régulièrement l'état d'un
-programme. Voici ce qu'il nous a appris :
-\begin{itemize}
-\item \texttt{partner} passe beaucoup de temps à chercher où se trouvent les
-	caractères à intervertir.
-\item \texttt{spin} modifie toujours chaque case du tableau.
-\end{itemize}
+Imaginons une course entre un lièvre et une tortue sur le parcours formé par
+$u_n$. Évidemment, le lièvre court plus vite que la tortue (disons deux fois
+plus vite). Dans cette course, avancer correspond à effectuer toute une danse
+(de notre problème initial).
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.7\linewidth]{cpu-bash-flamegraph.png}
-	\caption{\emph{Flame graph} créé par
-	\url{https://github.com/brendangregg/FlameGraph}}
-	\label{fig:flamegraph}
-\end{figure}
+\begin{exo}
+Avec votre voisin, faites la course sur le dessin (pour l'exemple, disons que
+$i=3$) et \emph{retrouvez} la période $k$ à partir de vos positions respectives.
+\end{exo}
 
-\section{Sur un cercle}
-Imaginons maintenant que les danseurs se trouvent sur un cercle.
+\begin{exo}[Préparation]
+\emph{Essayez} d'implémenter la simulation de cette course.
+\end{exo}
 
-\begin{wrapfigure}[8]{r}{0.4\textwidth}
-	\centering
-	\begin{tikzpicture}
-		\draw (0,0) circle [radius=0.7cm];
-		\draw (0,0) circle [radius=1.4cm];
-		\draw (0,0) circle [radius=2.1cm];
-		%\foreach \angle [count=\xi] in {0,90,180,270} {
-			%\draw[dashed] (\angle:0.2cm) -- (\angle:2cm);
-		%}
-	\end{tikzpicture}
-	\caption{Cercle (à compléter !)}
-	\label{fig:circle}
-\end{wrapfigure}
+\subsection{Ça tourne...}
 
-Par groupes, répondez à ces questions :
+\begin{exo}[Préparation]
+\emph{Représentez} les personnages sur un cercle.
+\end{exo}
 
+\begin{exo}
+\emph{Répondez} aux questions suivantes :
 \begin{enumerate}
 \item Où se trouve le premier danseur ?
+	\marginpar{flèche}
 \item Y a-t-il plusieurs façons de lire un tel schéma ?
 	\marginpar{sens de rotation}
 \item Que fait \texttt{spin 2} ? Est-ce que ça va plus vite ?
@@ -240,316 +347,40 @@ Par groupes, répondez à ces questions :
 	\item Sinon, expliquez pourquoi c'est impossible.
 	\end{itemize}
 \end{enumerate}
+\end{exo}
 
-\marginpar{optimisé \texttt{spin}, isomorphe tab}
+\begin{teacheronly}
+\section*{La suite}
+La véritable préparation notée au journal de classe dépendra de l'avancement de
+la classe.
 
-\section{Transformations}
-On peut s'occuper séparément des positions et des personnages :
+Pour réellement implémenter la simulation, plusieurs approches sont
+envisageables :
 \begin{itemize}
-	\item \texttt{spin} et \texttt{exchange} ne dépendent pas des personnages.
-	\item \texttt{partner} ne dépend pas des positions.
+\item \emph{parser} les pas stockés dans un fichier texte semblable à ce qui
+	est produit par le générateur original : le code n'est pas particulièrement
+	compliqué mais autant évaluer une chose à la fois. Même en BAB1, c'est non
+	trivial (cf. séance CPUMONS).
+\item générer une longue fonction qui effectue une danse : ce n'est pas d'une
+	grande élégance mais ça a le mérite d'être transparent et plus facile à
+	déboguer. Un autre avantage de cette approche est qu'elle leur montre
+	qu'une optimisation peut être non triviale.
 \end{itemize}
 
-De cette façon, ces deux familles de pas n'<<~interfèrent~>> plus comme on le
-voyait à la fin du chapitre \ref{ch:sim} et
-il devient possible (et utile !) de les résumer séparément.
+La notion de \emph{type somme}
+\footnote{En OCaml, \texttt{type t = Spin of int | Exchange of int * int}}
+(avec le \emph{pattern matching}
+\footnote{\texttt{match s with Spin n -> ... | Exchange (i, j) -> ...}}) peut
+aider à mieux structurer le programme et montre une alternative à la POO au
+moins aussi élégante.
 
-%FIXME comment les utiliser
-
-\subsection{Tableaux}
-Changeons totalement notre manière de voir les choses : puisqu'on peut échanger
-séparément les personnages, on peut utiliser un tableau indicé
-\marginpar{structure $\neq$ de celle employée par la simulation
-	pour ne pas confondre}
-par un personnage afin d'associer
-à chacun celui avec lequel il a été échangé.
-Le tableau ne stocke plus où se trouvent les personnages mais décrit
-comment les échanger.
-
-Cette définition peut paraître étrange : habituellement, on indice un tableau
-avec un entier, pas un caractère. En réalité, on peut voir un caractère
-comme un entier sur un octet\footnote{Ce n'est pas vrai en général ($\pi$...)
-mais nous n'utilisons que les lettres de A à P. Un~octet (\emph{byte}) est
-composé de 8~bits (0 ou 1), ce qui fait seulement $2^8=256$ possibilités, donc
-pas assez pour ne serait-ce que le chinois.} : en ASCII,
-les majuscules commencent à 65 et se suivent, donc B=66, C=67, etc. Il peut
-alors retirer 65 de chaque lettre pour obtenir des indices dans $\{0..15\}$ :
-
-\begin{table}[h]
-\center
-\begin{tabular}{c|c|c}
-Lettre & ASCII & Indice \\ \hline\hline
-A & 65 & 0 \\ \hline
-B & 66 & 1 \\ \hline
-C & 67 & 2 \\ \hline
-\dots & \dots & \dots \\ \hline
-P & 80 & 15
-\end{tabular}
-\caption{Équivalence d'indices}
-\end{table}
-
-Par groupes, travaillez sur ces exercices :
-\begin{enumerate}
-\item \boxes Que contient le tableau avant le premier \texttt{partner x y} ?
-	\marginpar{indices !}
-\item \boxes Construisez un tableau qui ne représente que \texttt{partner A B}.
-	\marginpar{dessiner les rails équivalents}
-\item \boxes Construisez un autre tableau représentant \texttt{partner B C}.
-\item \boxes Comment pourriez-vous les résumer (\emph{composer}) ?
-	L'ordre importe-t-il ?
-	\marginpar{rails connectés}
-\item \boxes Comment appliquer le dernier tableau à la
-		situation initiale \texttt{BDCA} ? \\
-	\boxes Notez ici le résultat de la simulation et comparez.
-\item \boxes Comment faire un tableau qui a pour effet d'\emph{inverser} celui
-	d'un autre ?
-\end{enumerate}
-
-%TODO schéma pages résumées
-
-\subsection{Fonctions}
-Mathématiquement, un tableau présenté ci-dessus peut aussi être vu comme une
-\emph{fonction} qui prend comme paramètre un personnage, et qui change au fur et
-à mesure qu'on <<~apprend~>> les pas de la danse.
-Puisqu'il y a un nombre fini de personnages, on peut leur attribuer une case à
-chacun. On est aussi capable de comparer deux fonctions : cela revient à
-comparer les tableaux qui les décrivent.
-
-\subsubsection{Algèbre}
-Pourquoi raisonner de manière abstraite ?
-\marginpar{métaphore entrée Disneyland}
+Pour faire du dépassement, j'ai le choix entre différents parcours :
 \begin{itemize}
-\item pour s'éloigner d'exemples particuliers (parfois \emph{trop} simples)
-\item pour disposer d'une notation utilisable dans des propriétés mathématiques
-\item pour réutiliser des solutions générales (même <<~vocabulaire~>>)
-\item pour prouver que notre solution est correcte
-\item pour impressionner la galerie \emph{(un peu, j'avoue)}
+\item un peu de programmation fonctionnelle pour exhiber
+	la composition de fonctions
+\item seconde partie avec une nouvelle opération
+	\texttt{partner}$(x, y\in\{A\dots P\})$
 \end{itemize}
-
-%TODO parler des deux principales notations ??
-
-Les applications ($f:X\rightarrow X$) munies de la composition $\circ$ forment un
-groupe non commutatif appelé le groupe des permutations $S_n$ avec $n=|X|$ :
-\begin{itemize}
-\item la composition de deux fonctions reste une fonction
-	(elle est \emph{interne}) :
-	\[\forall f,g \in S_n \quad g \circ f \in S_n\]
-\item l'élément neutre est la fonction identité :
-	\[\forall f\in S_n \quad (id\circ f) = (f\circ id) = f\]
-\item la composition est associative :
-	\[\forall f, g, h \in S_n \quad (f\circ g)\circ h = f\circ (g\circ h)\]
-	Cela nous permet de donner un sens à
-	$f\circ f\circ f \circ f\circ f\circ f\circ f=f^7$ : cette propriété
-	dit en substance que les parenthèses sont inutiles, que seul le nombre de
-	$f$ importe.
-\item chaque fonction admet un inverse :
-	\[\forall f\in S_n, \exists f'\in S_n \quad f\circ f'=f'\circ f=id\]
-	Ici, puisque cet inverse est unique, on se permet de l'écrire $f^{-1}$.
-	%TODO preuve
-
-	Une propriété intéressante découle de cette définition
-	(cf. démo sur le Rubik's Cube) :
-	\marginpar{récurrence}
-	\[
-		\forall k\in\mathbb{N}_0, f_1,f_2\dots f_k \in S_n \quad
-		\left(f_1\circ f_2\circ \dots \circ f_k\right)^{-1} =
-		\left(f_k^{-1}\circ f_{k-1}^{-1}\circ \dots \circ f_1^{-1}\right)
-	\]
-	%\begin{figure}[ht]
-	%	\centering
-	%	\includegraphics[width=0.3\linewidth]{rubik.png}
-	%	\caption{Illustration avec un Rubik's Cube}
-	%	\label{fig:rubik}
-	%\end{figure}
-\end{itemize}
-
-Question : avez-vous des exemples de groupe plus simples que vous manipulez tous
-les jours peut-être sans le savoir ? Êtes-vous sûr que c'en est vraiment un ?
-\marginpar{$(\mathbb{N}_0,\times)$, attention}
-
-Une telle définition permet de définir des algorithmes génériques, c'est-à-dire
-des méthodes pour résoudre des problèmes sur
-\emph{n'importe quoi qui forme un groupe}.
-L'algorithme de l'exponentiation rapide
-\marginpar{début du commerce en ligne}
-%sur lequel reposent plusieurs outils de cryptographie moderne :
-permet par exemple de calculer (plus rapidement que naïvement)
-la $n$ème puissance d'un élément $x$ d'un groupe $(G, \times)$,
-voici à la fois sa preuve et sa définition :
-\[
-	\forall n \in \mathbb{N}, x \in G \quad
-	x^n = \left\{\begin{array}{ll}
-		1 &
-			\text{si $n=0$} \\
-		\left(x^2\right)^{\frac n2} = \left(x\times x\right)^{\frac n2} &
-			\text{si $n$ est pair} \\
-		x\times \left(x\times x\right)^{\left\lfloor\frac n2\right\rfloor} =
-		\left(x\times x\right)^{\left\lfloor\frac n2\right\rfloor}\times x &
-			\text{si $n$ est impair (par assoc.)}
-	\end{array}\right.
-\]
-
-Questions :
-\begin{enumerate}
-\item À l'aide de cet algorithme, que vaut $2^{65}\text{ mod }19$ ?
-	Quel groupe utilisez-vous ?
-	\marginpar{
-		$2^a(1,2\dots18)$ forme une permutation $\forall a\in\mathbb{N}$ car
-		$(2,19)=1$, cf. preuve de Fermat dans \emph{toy-crypto}}
-\item (Hors-sujet) Sans l'appliquer, y a-t-il plus ou moins de possibilités pour
-	$2^{42507}\text{ mod }6$ ?
-\end{enumerate}
-%FIXME évoquer Fermat ? nan, complètement hors-sujet
-
-Si on particularise l'algorithme à notre groupe $S_n$, on trouve : \[
-	\forall n \in \mathbb{N}, f \in S_n \quad
-	f^n = \left\{\begin{array}{ll}
-		id &
-			\text{si $n=0$} \\
-		\left(f^2\right)^{\frac n2} = \left(f\circ f\right)^{\frac n2} &
-			\text{si $n$ est pair} \\
-		f\circ \left(f\circ f\right)^{\left\lfloor\frac n2\right\rfloor} =
-		\left(f\circ f\right)^{\left\lfloor\frac n2\right\rfloor}\circ f &
-			\text{si $n$ est impair (par assoc.)}
-	\end{array}\right.
-\]
-
-%$\left\{f^n|n \in \mathbb{N}\right\}=\langle f\rangle$ forme un groupe fini.
-En vertu du principe des tiroirs,
-tout élément d'un groupe fini est d'ordre $k$ fini :
-\marginpar{quasi $f^t=f$, prenons $t=k+1$}
-\[
-%FIXME schématiser ?
-	\forall f\in S_n, \exists k\in \mathbb{N} \quad
-		%f^k=id
-		k=\min\{k\mid f^k=id\}
-\]
-
-Ce groupe correspond à la suite qu'on a construite en \ref{sec:suite} et cette
-propriété nous fournit une version spécialisée de l'algorithme du lièvre et de
-la tortue qui calcule l'ordre de $f$.
-%TODO sous-groupe ? pas utile je crois
-
-\subsubsection{Manipulations directes}
-Pour éviter de créer une multitude de tableaux, on peut s'intéresser à l'effet
-en terme de composition de fonctions qu'a l'échange direct (on pourrait dire
-brutal...) des cases $i$ et $j$.
-
-Questions :
-\begin{enumerate}
-\item Que calcule la nouvelle fonction (le nouveau tableau) selon l'original(e)?
-\item Comment exploiter la propriété sur l'inverse afin de traiter les pas dans
-	l'ordre du script ?
-\end{enumerate}
-\marginpar{$g(x) = f\left(h_{ab}(x)\right)$, $h_{ab}$ a 3 cas}
-%\[\begin{array}{ll}
-	%g(x) &= f\left(h_{ab}(x)\right) \\
-	%h_{ab}(x) &= \left\{\begin{array}{ll}
-		%b & x=a \\
-		%a & x=b \\
-		%x & \text{sinon}
-	%\end{array}\right.
-%\end{array}\]
-
-Le même raisonnement s'applique aussi à une rotation.
-
-\subsubsection{Toute une danse}
-On a écrit plus haut qu'il fallait faire séparément le même travail pour les
-positions et pour les personnages. Le concept de produit direct de groupes
-modélise cette manière de travailler. Soient $G$ et $H$ des groupes. On définit
-une opération $\star$ entre des éléments de $G\times H$ comme suit : \[
-%$G\times H$ comme un groupe d'ensemble $G\times H$ et d'opération : \[
-	(g_1, h_1) \star (g_2, h_2) = (g_1g_2, h_1h_2)
-\]
-%Si G est cyclique, G est commutatif.
-	%Soient x et y des éléments de G.
-	%Soit g un générateur de ce groupe.
-	%On sait donc qu'il existe i\in\mathbb{N} x=g^i et j\in\mathbb{N} y=g^j.
-	%xy=(g^i)(g^j)=g^(i+j)=g^(j+i)=(g^j)(g^i)=yx
-
-On prouve facilement que $(G\times H, \star)$ forme un groupe (vérifiez !).
-Une danse complète est ainsi un élément d'un tel groupe :
-$d\in S_{16}\times S_{16}$.
-Calculer l'effet de la répétition d'une danse peut se faire <<~en une fois~>>
-grâce au même algorithme sur ce nouveau groupe.
-
-La propriété sur l'ordre des éléments de ce nouveau groupe fini
-motive notre première implémentation de l'algorithme du lièvre
-et de la tortue présenté en \ref{sec:suite}
-qui demandait bien moins de connaissances sur notre domaine.
-%TODO le faire et parler de ppcm, enfin utile ? étendre au CRT ?
-
-%TODO énoncé Lagrange et sa conséquence : son ordre divise celui de $S_n$
-%TODO comprendre https://math.stackexchange.com/questions/2304763/longest-cycle-of-permutation-of-n-elements
-%TODO comprendre https://math.stackexchange.com/questions/59417/composition-of-permutation-to-generate-all-permutations
-
-\subsubsection{Conclusion}
-Plutôt que de calculer $\overbrace{d(d(d(\dots}^\text{$n$ fois} x)))$,
-on calcule $\left(d^n\right)(x)$ en manipulant la fonction. Le résultat est le
-même que de calculer les (nombreux) résultats intermédiaires mais c'est bien
-plus rapide.
-
-\subsection{Cycles à supports disjoints}
-Il y a une manière plus compacte de représenter nos fonctions.
-Prenons un exemple :
-\marginpar{dessiner à côté !}
-\begin{itemize}
-\item $f(A)=A$
-\item $f(B)=C$
-\item $f(C)=B$
-\item $f(D)=D$
-\end{itemize}
-
-En suivant l'\emph{orbite} de $B$ (en composant la fonction avec elle-même et
-en regardant chaque transformation intermédiaire...),
-on trouve $(B,C)$ : $A$ et $D$ ne bougent pas, inutile de les écrire.
-Une autre possibilité est $(C,B)$, elles sont identiques à une rotation près.
-
-Voici un autre exemple :
-\begin{itemize}
-\item $f(A)=C$
-\item $f(B)=D$
-\item $f(C)=B$
-\item $f(D)=A$
-\end{itemize}
-
-Répondez à ce questions :
-\begin{enumerate}
-\item Quelle est l'unique cycle dans l'exemple ci-dessous ?
-	\marginpar{$(A,C,B,D)$}
-\item Combien de façon existe-t-il de l'écrire ?
-	\marginpar{4}
-\end{enumerate}
-
-L'ordre de ces espèces de facteurs n'a pas d'importances (on dit qu'ils
-\emph{commutent}) : ils ne peuvent pas s'influencer puisqu'ils
-contiennent des éléments différents !
-%TODO décomposition des nombres, test de primalité ?
-
-Calculer la composée de deux fonctions représentées de cette manière n'est pas
-pratique (amusez-vous...) mais calculer l'ordre d'une fonction devient visuel :
-c'est le plus
-petit commun multiple entre les longueurs des cycles qui la composent !
-%TODO schéma ?
-
-Cette représentation permet de facilement savoir en combien d'applications une
-formule sur le Rubik's Cube s'annulera (si on oublie la parité, mais c'est une
-autre histoire !).
-\marginpar{groupe compliqué}
-
-\section{Réduction} %FIXME pas vraiment further work...
-On vous demande d'optimiser des programmes de cette forme et d'éliminer les
-affectations simultanées en utilisant le moins de variables temporaires
-possible :
-%TODO bricoler un compilateur à partir d'une danse (pos ou persos)
-\begin{verbatim}
-a, b, c, d = d, b, a, c
-b, c, a, d = b, a, c, d
-a, b, c, d = b, c, d, a
-(...)
-\end{verbatim}
-
-Question :
-comment pouvez-vous réduire ce problème à celui qu'on vient de résoudre ?
+\end{teacheronly}
 
 \end{document}
