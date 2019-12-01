@@ -50,16 +50,18 @@ jours avant Noël et qu'il avait oublié de les numéroter.
 Il a presque réussi à les remettre dans l'ordre mais \tbold{il hésite entre
 deux possibilités} et il n'a plus le temps de \tbold{les essayer}.
 
+\begin{minipage}{\textwidth}
 Ils commencent dans l'ordre (${A\dots P}$) et enchaînent deux types de pas :
 \begin{itemize}
 \item \tbold{\texttt{spin}} $n$ ($\forall n \in \{1\dots15\}$) :
-	\marginpar{expliquer la notation : $\forall x \in E$...}
+	%\marginpar{expliquer la notation : $\forall x \in E$...}
 	les \tbold{$n$ derniers} viennent devant les premiers. \\
 	Par exemple, \texttt{spin 3} sur \texttt{DACB} donne \texttt{ACBD}.
 \item \tbold{\texttt{exchange}} $i$ $j$ ($\forall i,j \in \{0\dots15\}$) :
 	ceux en $i$ et $j$ échangent leur place. \\
 	Par exemple, \texttt{exchange 0 2} sur \texttt{CBDA} donne \texttt{DBCA}.
 \end{itemize}
+\end{minipage}
 
 \begin{exo}
 \emph{Surlignez} les mots importants de l'histoire ci-dessus.
@@ -156,21 +158,27 @@ REPL\footnote{\emph{Read-Eval-Print Loop}} et
 \emph{expliquez} chaque résultat :
 \begin{enumerate}
 	\item \texttt{t = []} \tonly{crée un tableau vide}
-		\hfill \boxes ////
+		\dotfill \boxes ////
 	\item \texttt{print(t[0])} \tonly{lève une \texttt{IndexError}}
+		\dotfill
 	\item \texttt{t.append(2)}
-		\hfill \boxes 2///
+		\dotfill \boxes 2///
 	\item \texttt{print(t[0])} \tonly{affiche 2, le premier élément}
+		\dotfill
 	\item \texttt{print(t[-1])} \tonly{devrait les surprendre}
+		\dotfill
 	\item \texttt{t.append(4)}
-		\hfill \boxes 24//
+		\dotfill \boxes 24//
 	\item \texttt{print(t[-1])} \tonly{affiche 4, le dernier élément}
+		\dotfill
 	\item \texttt{t.append(6)}
-		\hfill \boxes 246/
+		\dotfill \boxes 246/
 	\item \texttt{t.append(8)}
-		\hfill \boxes 2468
+		\dotfill \boxes 2468
 	\item \texttt{print(t[-2])} \tonly{affiche 6, l'avant-dernier élément}
+		\dotfill
 	\item \texttt{print(t[1.5])} \tonly{lève une \texttt{TypeError}}
+		\dotfill
 \end{enumerate}
 \end{exo}
 
@@ -189,6 +197,7 @@ représentés par quatre lettres.
 	\end{enumerate}
 \end{exo}
 
+%\begin{minipage}{\textwidth}
 \begin{exo}
 \emph{Complétez} ces schémas puis \emph{implémentez} \texttt{exchange} :
 	\marginpar{cases vides !!}
@@ -199,6 +208,7 @@ représentés par quatre lettres.
 	\end{enumerate}
 \end{multicols}
 \end{exo}
+%\end{minipage}
 
 \begin{exo}
 En permutant deux pas, le résultat change...
@@ -207,10 +217,13 @@ En permutant deux pas, le résultat change...
 		\item toujours ?
 			\tonly{$x_{01}\circ x_{23}=x_{23}\circ x_{01}\equiv$\boxes badc}
 			\marginpar{détailler une fois au tableau}
+			\dotfill
 		\item jamais ?
 			\tonly{$x_{01}\circ x_{12}\equiv$\boxes cabd$\ne$
 			\boxes bcad$\equiv x_{12}\circ x_{01}$}
+			\dotfill
 		\item parfois ? \tonly{parce qu'on a contredit les deux précédentes !}
+			\dotfill
 	\end{enumerate}
 \end{exo}
 
@@ -230,7 +243,9 @@ Remarquez qu'aucun personnage ne peut disparaître du tableau.
 d'un personnage dans notre simulation en commençant par la $i$ème case.
 \begin{enumerate}
 \item \tonly{Si \texttt{t[i] == x}, retourner $i$.}
+	\dotfill
 \item \tonly{Sinon, poursuivre la recherche à partir de l'indice $i+1$.}
+	\dotfill
 \end{enumerate}
 \end{exo}
 \begin{exo}[Préparation]
