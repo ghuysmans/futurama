@@ -1,8 +1,6 @@
-module Make (I: Permutation.S) = struct
+module Make (I: Permutations.Model.Enumerable with type item := int) = struct
   let draw ch a =
     a |> I.iter @@ fun i i' ->
-      let i = I.int_of_i i in
-      let i' = I.int_of_i i' in
       Printf.fprintf ch "\\draw(%d,1)--(%d,0);\n" i i'
 
   let tikz ch a =

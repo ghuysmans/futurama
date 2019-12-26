@@ -25,4 +25,4 @@ let cycle init move (<=>) n =
 
 let pow (<=>) move init n =
   let {rem; length; from} = cycle init move (<=>) n in
-  Util.pow move from (rem mod length)
+  Algebra.Naive.pow move from (rem mod length)

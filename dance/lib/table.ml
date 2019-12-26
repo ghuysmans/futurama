@@ -1,12 +1,12 @@
-module Make (I: sig val n: int end) = struct
-  let n = I.n
+module Make (Op : Operation.S with type item := int) = struct
+  module Op = Op
 
   type t = int array
-  type i = int
-  let int_of_i i = i
 
   let make () =
-    Array.init I.n (fun i -> i)
+    Array.init Op.order (fun i -> i)
+
+  let copy = Array.copy
 
   let equal = (=)
 
@@ -15,20 +15,26 @@ module Make (I: sig val n: int end) = struct
   let iter = Array.iteri
 
   let update a = function
-    | Permutation.Operation.Transpose (i, j) ->
+    | Op.Transpose (i, j) ->
       let tmp = a.(i) in
       a.(i) <- a.(j);
       a.(j) <- tmp
     | Rotate n ->
-      let tmp = Array.init I.n (fun i -> a.((i + n) mod I.n)) in
-      Array.blit tmp 0 a 0 I.n
+      if n = 0 then
+        ()
+      else
+        let tmp = Array.init Op.order (fun i -> a.((i + n) mod Op.order)) in
+        Array.blit tmp 0 a 0 Op.order
+
+  let just o =
+    let a = make () in
+    update a o;
+    a
 
   let inv t =
-    let arr = Array.make I.n (-1) in
+    let arr = Array.make Op.order (-1) in
     Array.iteri (fun i v -> arr.(v) <- i) t;
     arr
-
-  let to_array t = t
 
   let (@) g f = Array.map (Array.get g) f
 end

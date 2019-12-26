@@ -1,2 +1,3 @@
 (library
- (name permutations))
+ (name permutations)
+ (libraries algebra))

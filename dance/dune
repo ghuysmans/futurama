@@ -1,1 +1,0 @@
-(executables (names dance test) (libraries permutations))
