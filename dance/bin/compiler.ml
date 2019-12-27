@@ -1,8 +1,11 @@
 open Permutations
 
-module Make (P : sig val order : int end) = struct
-  module Full_op = Aoc17_day16.Make (struct let n = P.order end)
-  module Op = Aoc17_day16.Only_positions (Full_op)
+module type S = sig
+  include Operation.S with type item := int
+  val read_list : unit -> t list
+end
+
+module Make (Op : S) = struct
   module C = Circle.Make (Op)
   module T = Algebra.Monoid.Tools.I (C)
 
@@ -57,8 +60,21 @@ end
 
 open Cmdliner
 
-let main order lang n comment opt =
-  let module M = Make (struct let order = order end) in
+type t =
+  | Positions
+  | Characters
+
+let main typ order lang n comment opt =
+  let module Full = Aoc17_day16.Make (struct let n = order end) in
+  let (module Op : S) =
+    match typ with
+    | Positions -> (module Aoc17_day16.Only_positions (Full))
+    | Characters ->
+      let module Ch = Aoc17_day16.Only_characters (Full) in
+      let module I = Algebra.Isomorphism.Char (struct let from = 'a' end) in
+      (module Aoc17_day16.Morph.Make (I) (Ch))
+  in
+  let module M = Make (Op) in
   let lang =
     match lang with
     | "c" -> M.c
@@ -70,6 +86,18 @@ let main order lang n comment opt =
     | _ -> failwith "inconsistent lang argument"
   in
   M.main lang n comment opt
+
+let typ =
+  let doc = "move type" in
+  let my_conv = Arg.enum [
+    "c", Characters;
+    "char", Characters;
+    "characters", Characters;
+    "p", Positions;
+    "pos", Positions;
+    "positions", Positions;
+  ] in
+  Arg.(value & opt my_conv Positions & info ~doc ["m"; "move"])
 
 let order =
   let doc = "order" in
@@ -100,7 +128,7 @@ let comment =
   Arg.(value & flag & info ~doc ["c"; "comment"])
 
 let main_t =
-  Term.(const main $ order $ lang $ n $ comment $ opt)
+  Term.(const main $ typ $ order $ lang $ n $ comment $ opt)
 
 let info =
   let doc = "a permutation compiler" in

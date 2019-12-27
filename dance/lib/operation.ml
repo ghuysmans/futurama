@@ -62,3 +62,31 @@ module Direct_product = struct
       | Right r -> Right (B.inv r)
   end
 end
+
+module Morph = struct
+  module type M = sig
+    include S
+
+    type s
+    val map : s -> t
+    val unmap : t -> s
+  end
+
+  module Make (I : Algebra.Isomorphism.S) (S : S with type item := I.i) = struct
+    type t =
+      | Transpose of I.j * I.j
+      | Rotate of int
+
+    let order = S.order
+
+    let map = function
+      | S.Transpose (x, y) -> Transpose (I.f x, I.f y)
+      | Rotate n -> Rotate n
+
+    let unmap = function
+      | Transpose (x, y) -> S.Transpose (I.f' x, I.f' y)
+      | Rotate n -> S.Rotate n
+
+    let inv t = unmap t |> S.inv |> map
+  end
+end

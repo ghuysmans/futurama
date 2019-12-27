@@ -105,3 +105,20 @@ module Only_characters (S : S) = struct
       | Partner (x, y) -> [Transpose (x, y)]) |>
     List.flatten
 end
+
+module Morph = struct
+  module type S = sig
+    include Operation.S
+    val read_list : unit -> t list
+  end
+
+  module type M = sig
+    include Operation.Morph.M
+    val read_list : unit -> t list
+  end
+
+  module Make (I : Algebra.Isomorphism.S) (S : S with type item := I.i) = struct
+    include Operation.Morph.Make (I) (S)
+    let read_list () = S.read_list () |> List.map map
+  end
+end
