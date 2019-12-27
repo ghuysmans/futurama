@@ -1,1 +1,1 @@
-(executables (names half naive) (libraries permutations))
+(executables (names puzzle) (libraries permutations))
