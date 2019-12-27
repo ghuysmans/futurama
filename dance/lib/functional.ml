@@ -7,12 +7,8 @@ module Make (Op : Operation.S with type item := int) = struct
 
   let (* extensionally *) equal a b =
     let rec f i =
-      if i = Op.order then
-        true
-      else if a i = b i then
-        f (i + 1)
-      else
-        false
+      i = Op.order ||
+      a i = b i && f (i + 1)
     in
     f 0
 
