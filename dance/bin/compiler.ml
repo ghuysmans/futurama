@@ -5,32 +5,43 @@ module C = Circle.Make (Op)
 module T = Algebra.Monoid.Tools.I (C)
 
 
-let c {Disjoint_cycles.dst; src} =
-  let var = function
-    | -1 -> "tmp"
-    | i -> Printf.sprintf "v%d" i
-  in
-  Printf.printf "%s = %s;\n" (var dst) (var src)
+let dump_cycles cmt =
+  List.iter (fun cycle ->
+    List.map string_of_int cycle |>
+    String.concat " -> " |>
+    cmt
+  )
 
-let latex {Disjoint_cycles.dst; src} =
-  let var = function
-    | -1 -> "t"
-    | i -> Printf.sprintf "v_{%d}" i
-  in
-  Printf.printf "$%s \\leftarrow %s$\n\n" (var dst) (var src)
-  (* TODO draw something? *)
+let c =
+  (fun {Disjoint_cycles.dst; src} ->
+    let var = function
+      | -1 -> "tmp"
+      | i -> Printf.sprintf "v%d" i
+    in
+    Printf.printf "%s = %s;\n" (var dst) (var src)),
+  fun comment l -> if comment then dump_cycles (Printf.printf "//%s\n") l
 
-let main lang n comment opt =
+let latex =
+  (fun {Disjoint_cycles.dst; src} ->
+    let var = function
+      | -1 -> "t"
+      | i -> Printf.sprintf "v_{%d}" i
+    in
+    Printf.printf "$%s \\leftarrow %s$\n\n" (var dst) (var src)),
+  fun comment l ->
+    if comment then dump_cycles (Printf.printf "%%%s\n") l;
+    () (* TODO draw something? *)
+
+let cycles =
+  ignore,
+  fun _ -> dump_cycles (Printf.printf "%s\n")
+
+let main (emit, show_cycles) n comment opt =
   let compile t =
     let open Disjoint_cycles in
     let cycles = C.to_array t |> of_array in
-    if comment then
-      cycles |> List.iter (fun cycle ->
-        List.map string_of_int cycle |>
-        String.concat " -> " |>
-        Printf.eprintf "%s\n"
-      );
-    to_moves (-1) cycles |> List.iter lang
+    if comment then show_cycles comment cycles;
+    to_moves (-1) cycles |> List.iter emit
   in
   let moves = Op.read_list () in
   if opt then
@@ -49,6 +60,7 @@ let lang =
   (* FIXME this breaks the help page! *)
   let my_conv = Arg.enum [
     "c", c;
+    "cycles", cycles;
     "javascript", c;
     "js", c;
     "latex", latex;
