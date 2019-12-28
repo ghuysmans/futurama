@@ -90,3 +90,15 @@ module Morph = struct
     let inv t = unmap t |> S.inv |> map
   end
 end
+
+module Named (P : sig type t val elements: t array end) = struct
+  module Iso = Algebra.Isomorphism.Reverse (Algebra.Isomorphism.Named (P))
+
+  module Indexed = Standard (struct
+    type item = int
+    let order = Array.length P.elements
+  end)
+
+  include Morph.Make (Iso) (Indexed)
+  let map, unmap = unmap, map
+end

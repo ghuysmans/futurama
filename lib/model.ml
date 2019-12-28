@@ -1,3 +1,4 @@
+(* TODO move this below and provide functors for S and I *)
 module Enumerable = struct
   module type S = sig
     (** to be substituted *)
@@ -6,6 +7,12 @@ module Enumerable = struct
 
     val get: t -> item -> item
     val iter: (item -> item -> unit) -> t -> unit
+  end
+
+  module Morph (I : Algebra.Isomorphism.S) (S : S with type item := I.i) = struct
+    type t = S.t
+    let get t j = S.get t (I.f' j) |> I.f
+    let iter f t = S.iter (fun i i' -> f (I.f i) (I.f i')) t
   end
 end
 
