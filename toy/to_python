@@ -1,0 +1,3 @@
+#!/bin/sh
+[ -z "$1" ] || echo "def $1():"
+./to_c |expand -t 4
