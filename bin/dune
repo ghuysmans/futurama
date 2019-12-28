@@ -1,3 +1,1 @@
-(executables
- (names aoc17_day16 futurama rubik)
- (libraries permut))
+(executables (names puzzle compiler) (libraries permutations cmdliner))

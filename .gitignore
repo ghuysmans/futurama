@@ -1,5 +1,5 @@
-*.swp
 _build/
+.merlin
 out.tex
 *.dot
 *.png
@@ -7,4 +7,4 @@ out.tex
 *.log
 *.out
 *.pdf
-.merlin
+day16.txt
