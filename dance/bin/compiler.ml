@@ -64,6 +64,11 @@ type t =
   | Positions
   | Characters
 
+type l =
+  | C
+  | Cycles
+  | LaTeX
+
 let main typ order lang n comment opt =
   let module Full = Aoc17_day16.Make (struct let n = order end) in
   let (module Op : S) =
@@ -77,13 +82,9 @@ let main typ order lang n comment opt =
   let module M = Make (Op) in
   let lang =
     match lang with
-    | "c" -> M.c
-    | "cycles" -> M.cycles
-    | "javascript" -> M.c
-    | "js" -> M.c
-    | "latex" -> M.latex
-    | "python" -> M.c (* semicolons are ignored *)
-    | _ -> failwith "inconsistent lang argument"
+    | C -> M.c
+    | Cycles -> M.cycles
+    | LaTeX -> M.latex
   in
   M.main lang n comment opt
 
@@ -105,15 +106,15 @@ let order =
 
 let lang =
   let doc = "output language" in
-  let my_conv = Arg.enum @@ List.map (fun x -> x, x) [
-    "c";
-    "cycles";
-    "javascript";
-    "js";
-    "latex";
-    "python";
+  let my_conv = Arg.enum [
+    "c", C;
+    "cycles", Cycles;
+    "javascript", C;
+    "js", C;
+    "latex", LaTeX;
+    "python", C;
   ] in
-  Arg.(value & opt my_conv "c" & info ~doc ["f"; "format"; "language"])
+  Arg.(value & opt my_conv C & info ~doc ["f"; "format"; "language"])
 
 let n =
   let doc = "iteration count" in
