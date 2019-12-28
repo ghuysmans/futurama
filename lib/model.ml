@@ -1,10 +1,12 @@
-module type Enumerable = sig
-  (** to be substituted *)
-  type t
-  type item
+module Enumerable = struct
+  module type S = sig
+    (** to be substituted *)
+    type t
+    type item
 
-  val get: t -> item -> item
-  val iter: (item -> item -> unit) -> t -> unit
+    val get: t -> item -> item
+    val iter: (item -> item -> unit) -> t -> unit
+  end
 end
 
 module type S = sig
