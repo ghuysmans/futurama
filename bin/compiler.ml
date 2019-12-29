@@ -54,7 +54,7 @@ module Make (Op : S) = struct
     let compile t =
       let open Disjoint_cycles in
       let cycles = C.to_array t |> of_array in
-      if comment then show_cycles comment cycles;
+      show_cycles comment cycles;
       to_moves (-1) cycles |> List.iter emit
     in
     let moves = Op.read_list () in
