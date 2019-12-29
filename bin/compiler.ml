@@ -46,6 +46,10 @@ module Make (Op : S) = struct
     ignore,
     fun _ -> dump_cycles (Printf.printf "%s\n")
 
+  let dot =
+    ignore,
+    fun _ l -> Disjoint_cycles.to_dot Op.string_of_item l |> Odot.print stdout
+
   let main (emit, show_cycles) n comment opt =
     let compile t =
       let open Disjoint_cycles in
@@ -73,6 +77,7 @@ type t =
 type l =
   | C
   | Cycles
+  | Dot
   | LaTeX
 
 let main typ order lang n comment opt =
@@ -96,6 +101,7 @@ let main typ order lang n comment opt =
     match lang with
     | C -> M.c
     | Cycles -> M.cycles
+    | Dot -> M.dot
     | LaTeX -> M.latex
   in
   M.main lang n comment opt
@@ -121,6 +127,7 @@ let lang =
   let my_conv = Arg.enum [
     "c", C;
     "cycles", Cycles;
+    "dot", Dot;
     "javascript", C;
     "js", C;
     "latex", LaTeX;

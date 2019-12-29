@@ -104,3 +104,20 @@ let to_moves tmp cycles =
 let of_moves l =
   test for disjoint cycles...
 *)
+
+let to_dot f cycles = Odot.{
+  strict = false;
+  kind = Graph;
+  id = None;
+  stmt_list =
+    cycles |>
+    List.map (function
+      | [] | [_] -> []
+      | h :: t -> [Stmt_edge (
+        Edge_node_id (simple_node_id (f h)),
+        List.map (fun n -> Edge_node_id (simple_node_id (f n))) t,
+        []
+      )]
+    ) |>
+    List.flatten
+}
