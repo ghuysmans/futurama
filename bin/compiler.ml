@@ -3,6 +3,7 @@ open Permutations
 module type S = sig
   include Operation.S with type item := int
   val read_list : unit -> t list
+  val string_of_item : int -> string
 end
 
 module Make (Op : S) = struct
@@ -11,7 +12,7 @@ module Make (Op : S) = struct
 
   let dump_cycles cmt =
     List.iter (fun cycle ->
-      List.map string_of_int cycle |>
+      List.map Op.string_of_item cycle |>
       String.concat " -> " |>
       cmt
     )
@@ -28,8 +29,13 @@ module Make (Op : S) = struct
   let latex =
     (fun {Disjoint_cycles.dst; src} ->
       let var = function
-        | -1 -> "t"
-        | i -> Printf.sprintf "v_{%d}" i
+        | -1 -> "T"
+        | i ->
+          (* FIXME? *)
+          if Op.string_of_item == string_of_int then
+            Printf.sprintf "v_{%d}" i
+          else
+            Op.string_of_item i (* TODO escape *)
       in
       Printf.printf "$%s \\leftarrow %s$\n\n" (var dst) (var src)),
     fun comment l ->
@@ -73,11 +79,17 @@ let main typ order lang n comment opt =
   let module Full = Aoc17_day16.Make (struct let n = order end) in
   let (module Op : S) =
     match typ with
-    | Positions -> (module Aoc17_day16.Only_positions (Full))
+    | Positions -> (module struct
+        include Aoc17_day16.Only_positions (Full)
+        let string_of_item = string_of_int
+      end)
     | Characters ->
       let module Ch = Aoc17_day16.Only_characters (Full) in
       let module I = Algebra.Isomorphism.Char (struct let from = 'a' end) in
-      (module Aoc17_day16.Morph.Make (I) (Ch))
+      (module struct
+        include Aoc17_day16.Morph.Make (I) (Ch)
+        let string_of_item i = String.make 1 (I.f' i)
+      end)
   in
   let module M = Make (Op) in
   let lang =
