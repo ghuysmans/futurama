@@ -5,8 +5,9 @@ maintainer: "Guillaume Huysmans <ghuysmans99@gmail.com>"
 authors: "Guillaume Huysmans <ghuysmans99@gmail.com>"
 homepage: "https://github.com/ghuysmans/permutations/"
 bug-reports: "https://github.com/ghuysmans/permutations/issues"
-dev-repo: "https://github.com/ghuysmans/permutations/"
+dev-repo: "git://github.com/ghuysmans/permutations/"
 build: [["dune" "build" "-p" name "-j" jobs]]
+synopsis: "Finite permutation library with an optimizing compiler"
 depends: [
   "dune" {build}
   "algebra"
