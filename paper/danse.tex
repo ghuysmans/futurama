@@ -4,7 +4,7 @@
 
 \title{Les tableaux}
 \author{Guillaume \textsc{Huysmans}}%, Quentin \textsc{Carpentier}}
-\date{2 décembre 2019}
+\date{23 janvier 2020}
 \begin{document}
 \maketitle
 
@@ -24,15 +24,14 @@ J'ai déjà abordé la récursivité avec mes élèves lors d'une séance sur le
 de Hanoï. Je les fais habituellement jongler entre deux notations : le
 pseudo-code et le langage choisi en classe (ici, j'ai pris Python mais je ne
 suis pas encore fixé).
+Ils ont déjà utilisé des variables et des structures conditionnelles.
 \end{teacheronly}
 
 \section{Introduction}
 
 \emph{Le problème décrit ici dérive d'Advent of Code
 \footnote{\url{https://adventofcode.com/2017/day/16}},
-un calendrier de l'Avent avec
-des problèmes algorithmiques au lieu de chocolats. Si vous en avez le courage,
-essayez d'y participer cette année !}
+le calendrier de l'Avent d'Eric Wastl.}
 
 Une société de petits personnages adore la danse. Chaque année, pour Noël, ils
 organisent une grande fête à laquelle leur Grande Reine Vénérée participe. Sa
@@ -50,8 +49,9 @@ jours avant Noël et qu'il avait oublié de les numéroter.
 Il a presque réussi à les remettre dans l'ordre mais \tbold{il hésite entre
 deux possibilités} et il n'a plus le temps de \tbold{les essayer}.
 
-\begin{minipage}{\textwidth}
-Ils commencent dans l'ordre (${A\dots P}$) et enchaînent deux types de pas :
+Représentés par des lettres majuscules ($A$ correspond à la reine...),
+ils commencent dans l'ordre (${A\dots P}$) avant d'enchaîner une suite de pas
+de deux types :
 \begin{itemize}
 \item \tbold{\texttt{spin}} $n$ ($\forall n \in \{1\dots15\}$) :
 	%\marginpar{expliquer la notation : $\forall x \in E$...}
@@ -61,17 +61,45 @@ Ils commencent dans l'ordre (${A\dots P}$) et enchaînent deux types de pas :
 	ceux en $i$ et $j$ échangent leur place. \\
 	Par exemple, \texttt{exchange 0 2} sur \texttt{CBDA} donne \texttt{DBCA}.
 \end{itemize}
-\end{minipage}
 
 \begin{exo}
 \emph{Surlignez} les mots importants de l'histoire ci-dessus.
 \end{exo}
 
-Avec ce que nous avons déjà vu, il serait possible d'utiliser une variable par
-case, donc deux fonctions avec plusieurs conditions suffiraient pour y lire et
-y écrire mais ça devient vite pénible\footnote{Déjà avec 16 personnages...}.
+Le concept de variable abordé lors du cours précédent permet déjà de simuler
+l'exécution d'une danse. Pour cela, stockons le nom des occupants de chaque
+case dans des variables différentes : soient $v_0\in\{A\dots P\}$ le personnage
+à la \emph{première} position, $v_1$ son voisin...
+jusqu'à $v_{15}$, le dernier.
 
-Soient les variables $v_0, v_1, v_2\dots v_{15} \in\{A\dots P\}$.
+\begin{exo}
+\emph{Complétez} l'algorithme correspondant à \texttt{exchange 0 1} :
+\marginpar{couleurs}
+\begin{enumerate}
+\item \pbox{$t\phantom{_0}$} $\leftarrow$ \pbox{$v_0$}
+\item \pbox{$v_0$} $\leftarrow$ \pbox{$v_1$}
+\item \pbox{$v_1$} $\leftarrow$ \pbox{$t\phantom{_0}$}
+\end{enumerate}
+\end{exo}
+
+Il semble difficile de généraliser ce petit algorithme à n'importe quels
+$i,j \in \{0\dots15\}$ : en Python, le nom d'une variable est littéral, donc
+en général
+\texttt{vi} ne fait pas référence à $v_i$ avec $i\in\mathbb{N}$ mais à une
+\emph{nouvelle variable} au nom trompeur.
+%Nous ne verrons pas vu comment référencer une variable dont le nom dépend
+%d'une autre variable, il est généralement possible 
+
+\begin{exo}
+\emph{Rappelez} les deux façons d'utiliser une variable \texttt{x} en Python :
+\begin{itemize}
+\item \tonly{\texttt{x}}
+\item \tonly{\texttt{x = e} où \texttt{e} est une expression}
+\end{itemize}
+\end{exo}
+
+Si nous tenons à utiliser des <<~variables numérotées~>>, nous allons devoir
+les doter des deux opérations supportées par les variables habituelles.
 
 \begin{exo}
 \emph{Complétez} l'algorithme naïf \texttt{lire}$(i\in\{0\dots15\})$ :
@@ -96,29 +124,28 @@ Soient les variables $v_0, v_1, v_2\dots v_{15} \in\{A\dots P\}$.
 \end{enumerate}
 \end{exo}
 
-Remarquez que les \emph{indices} commencent à zéro !
 \begin{exo}
 \emph{Déterminez} l'indice du dernier élément d'un tableau de
 $n\in\mathbb{N}_0$ éléments.
 \end{exo}
 
-Tout ce dont nous avons besoin, c'est d'accéder à la $i$ème variable.
-Un tableau de $n\in\mathbb{N}$ éléments de type $\alpha$ est une
-\emph{structure de données} qui permet précisément de le faire.
-Cette structure propose deux opérations :
+Tout cela devient vite pénible, et comme ce problème est récurrent, la plupart
+des langages de programmation proposent une \emph{structure de données}
+adaptée : le \emph{tableau}.
+Un tableau de $n\in\mathbb{N}$ éléments de type $\alpha$ supporte deux
+opérations élémentaires :
 \begin{itemize}
-\item \texttt{get}$(i\in\pbox{$\{0\dots n-1\}$}) : \alpha$ renvoie le $i$ème
-	\marginpar{sens particulier de $\{0\dots n-1\}$}
-	élément du tableau. \\
+\item \texttt{get}$(i\in\pbox{$\{0\dots n-1\}$}) : \alpha$ lit l'élément
+	d'indice $i$ du tableau. \\
 	En Python : \texttt{t[i]}
-\item \texttt{set}$(i\in\pbox{$\{0\dots n-1\}$}, x\in\alpha)$ remplace le
-	$i$ème élément par $x$ et ne renvoie rien. \\
+\item \texttt{set}$(i\in\pbox{$\{0\dots n-1\}$}, x\in\alpha)$ remplace
+	l'élément d'indice $i$ par $x$. \\
 	En Python : \texttt{t[i] = x}
 \end{itemize}
 
 Nous adopterons une notation graphique pour les représenter, même si \emph{un
-programme ne verra pas (contrairement à nous) directement où se trouve chaque
-élément} :
+programme ne verra pas directement où se trouve chacun de ses éléments},
+contrairement à nous :
 \marginpar{couleurs dans leur dos pour ne pas les voir direct'}
 \newcommand{\boxes}[4]{
 	$\begin{array}{|l|l|l|l|}\hline
@@ -144,13 +171,10 @@ un tableau peut changer de taille au cours de l'exécution du programme :
 \item \texttt{t.append(x)} ajoute un élément à la fin de \texttt{t}.
 \item \texttt{len(t)} retourne la longueur de $t$.
 \end{itemize}
-Cependant, faites attention aux indices ! Si vous accédez à un indice qui
-n'existe pas, votre programme pourrait se planter. Ou pire.
 
-\begin{exo}[Bonus]
-\emph{Demandez} à Python si \texttt{[] is []} est vrai,
-puis \emph{essayez} avec des nombres...
-\end{exo}
+Ces nouvelles fonctionnalités peuvent compliquer les raisonnements sur les
+indices auxquels on accède : sortir d'un tableau n'est pas permis, et en
+Python, cela ne se traduit pas toujours par le crash de notre programme !
 
 \begin{exo}
 \emph{Tapez} les instructions suivantes dans le
@@ -187,7 +211,7 @@ Pour simplifier, limitons-nous à 4 personnages
 représentés par quatre lettres.
 
 \begin{exo}\label{ex:sim}
-\emph{Simulez} les étapes successives de cette danse :
+Sur papier, \emph{simulez} les étapes successives de cette danse :
 	\begin{enumerate}%[label=\alph*.]
 	\item (positions initiales) \hfill \boxes abcd
 	\item \texttt{spin 3} \hfill \boxes bcda
@@ -212,7 +236,7 @@ représentés par quatre lettres.
 
 \begin{exo}
 En permutant deux pas, le résultat change...
-	(\emph{entourez et justifiez} la bonne réponse) :
+(n'oubliez pas de \emph{justifier} !) :
 	\begin{enumerate}
 		\item toujours ?
 			\tonly{$x_{01}\circ x_{23}=x_{23}\circ x_{01}\equiv$\boxes badc}
@@ -273,8 +297,30 @@ tout ce temps. S'il se trompe, il sera exécuté, lui et toute sa famille.
 %Son règne n'est pas près de s'arrêter : Sa~Majesté est immortelle.
 \end{comment}
 
+\subsection{Ça tourne...}
+
+\begin{exo}
+\emph{Représentez} les personnages sur un cercle et
+\emph{répondez} aux questions suivantes :
+\begin{enumerate}
+\item Où se trouve le premier danseur ?
+	\marginpar{flèche}
+\item Y a-t-il plusieurs façons de lire un tel schéma ?
+	\marginpar{sens de rotation}
+\item Que fait \texttt{spin 2} ? Est-ce que ça va plus vite ?
+	\marginpar{compter à partir de la flèche}
+\item Que fait \texttt{exchange 0 3} après \texttt{spin 2} ?
+\item Un tableau est-il encore adapté ?
+	\marginpar{plier, montre.}
+	\begin{itemize}
+	\item Si c'est le cas, \emph{représentez}-le à plat.
+	\item Sinon, \emph{expliquez} pourquoi c'est impossible.
+	\end{itemize}
+\end{enumerate}
+\end{exo}
+
 \subsection{Périodicité}
-Si on écrit $d(x)$ le résultat de la danse $d$ sur les positions des danseurs
+En écrivant $d(x)$ le résultat de la danse $d$ sur les positions des danseurs
 $x$, les positions à la fin de chaque danse peuvent être modélisées à l'aide
 d'une suite :\[
 	\forall n \in \mathbb{N} \quad u_n =
@@ -337,31 +383,6 @@ $i=3$) et \emph{retrouvez} la période $k$ à partir de vos positions respective
 
 \begin{exo}[Préparation]
 \emph{Essayez} d'implémenter la simulation de cette course.
-\end{exo}
-
-\subsection{Ça tourne...}
-
-\begin{exo}[Préparation]
-\emph{Représentez} les personnages sur un cercle.
-\end{exo}
-
-\begin{exo}
-\emph{Répondez} aux questions suivantes :
-\begin{enumerate}
-\item Où se trouve le premier danseur ?
-	\marginpar{flèche}
-\item Y a-t-il plusieurs façons de lire un tel schéma ?
-	\marginpar{sens de rotation}
-\item Que fait \texttt{spin 2} ? Est-ce que ça va plus vite ?
-	\marginpar{compter à partir de la flèche}
-\item Que fait \texttt{exchange 0 3} après \texttt{spin 2} ?
-\item Un tableau est-il encore adapté ?
-	\marginpar{plier, montre.}
-	\begin{itemize}
-	\item Si c'est le cas, représentez-le à plat.
-	\item Sinon, expliquez pourquoi c'est impossible.
-	\end{itemize}
-\end{enumerate}
 \end{exo}
 
 \begin{teacheronly}
