@@ -7,6 +7,7 @@ homepage: "https://github.com/ghuysmans/permutations/"
 bug-reports: "https://github.com/ghuysmans/permutations/issues"
 dev-repo: "git://github.com/ghuysmans/permutations/"
 build: [["dune" "build" "-p" name "-j" jobs]]
+build-test: [["dune" "runtest" "-p" name "-j" jobs]]
 synopsis: "Finite permutation library with an optimizing compiler"
 depends: [
   "dune" {build}
