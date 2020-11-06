@@ -16,7 +16,7 @@ jobs:
       - name: Compile LaTeX documents
         uses: ghuysmans/latex-action@master
         with:
-          root_file: eleve
+          root_file: eleve.tex
           working_directory: paper
       - name: Create Release
         id: create_release
