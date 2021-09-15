@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Dansez maintenant !</title>
+<style>
+script {
+	display: block;
+	font-family: monospace;
+	white-space: pre;
+}
+</style>
+<script src="danse.js"></script>
+</head>
+<body>
+<h1>Dansez maintenant !</h1>
+<p>
+	Cette page est un bac à sable où vous pourrez vérifier vos solutions aux
+	<a href="eleve.pdf">exercices</a> par simulation.
+	Pour ce faire, vous avez deux choix :
+</p>
+<ol>
+	<li>Travailler dans la console du navigateur (ouvrez-la avec F12) mais
+		votre travail ne sera pas enregistré.</li>
+	<li>Enregistrer cette page (menu <i>Fichier &gt; Enregistrer sous</i>) puis
+		la modifier localement et l'ouvrir dans votre navigateur (en appuyant
+		sur F5 après chaque changement).</li>
+</ol>
+<h2>Initialisation</h2>
+<script>//tableau
+var t;
+
+function init() {
+	t = Array.from("abcdefghijklmnop");
+}
+
+function init_mini() {
+	t = Array.from("abcd");
+}
+
+init_mini();
+</script>
+<h2>Mouvements</h2>
+<script>//échange les cases i et j
+function exchange(i, j) {
+	//TODO
+}
+
+//fait passer devant les n derniers
+function spin(n) {
+	//TODO
+}
+</script>
+<h2>Tests</h2>
+<script>//affiche une erreur si la chaîne est différente
+function expect(expected) {
+	let actual = t.join("");
+	if (actual != expected)
+		console.error("attendu", expected, "réel", actual);
+}
+
+//faisable à la main
+function courte() {
+	spin(3);
+	exchange(0, 1);
+	spin(1);
+	exchange(2, 3);
+}
+
+//si ça échoue, il y a un très gros problème
+function smoke_test() {
+	//TODO utiliser courte et prédire le résultat
+}
+
+//test final avec la danse de l'autre fichier
+function hard_test() {
+	init();
+	longue();
+	expect("nocjipkedhmlgfab");
+}
+
+smoke_test();
+//hard_test();
+</script>
+</body>
+</html>

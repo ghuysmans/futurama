@@ -1,0 +1,7 @@
+#!/bin/sh
+[ -z "$1" ] || echo "function $1() {"
+sed -e s/,/\\n/g |
+sed -e "s/^x\([0-9]\+\)\/\([0-9]\+\)$/\texchange(\1, \2);/g" \
+	-e "s/^s\([0-9]\+\)$/\tspin(\1);/g" \
+	-e "s/^p\([a-z]\)\/\([a-z]\)$/\tpartner('\U\1', '\U\2');/g"
+[ -z "$1" ] || echo }
