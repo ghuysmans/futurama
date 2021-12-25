@@ -1,29 +1,29 @@
-let pow n l =
-  let skip s l =
-    let a = Array.of_list l in
-    let visited = Array.make (Array.length a) false in
-    let rec walk first cycle current =
-      if current = first then
-        List.rev cycle
-      else (
-        visited.(current) <- true;
-        walk first (a.(current) :: cycle) ((current + s) mod Array.length a)
-      )
-    in
-    let rec f acc i =
-      if i = Array.length a then
-        List.rev acc
-      else if visited.(i) then
-        (* already in a previous cycle... *)
-        f acc (i + 1)
-      else
-        match walk i [a.(i)] ((i + s) mod Array.length a) with
-        | [_] -> f acc (i + 1) (* useless *)
-        | c -> f (c :: acc) (i + 1)
-    in
-    f [] 0
+let skip s a =
+  let visited = Array.make (Array.length a) false in
+  let next i = (i + s) mod Array.length a in
+  let rec walk first cycle current =
+    if current = first then
+      List.rev cycle
+    else (
+      visited.(current) <- true;
+      walk first (a.(current) :: cycle) (next current)
+    )
   in
-  List.map (skip n) l |> List.flatten
+  let rec f acc i =
+    if i = Array.length a then
+      List.rev acc
+    else if visited.(i) then
+      (* already in a previous cycle... *)
+      f acc (i + 1)
+    else
+      match walk i [a.(i)] (next i) with
+      | [_] -> f acc (i + 1) (* useless *)
+      | c -> f (c :: acc) (i + 1)
+  in
+  f [] 0
+
+let pow n l =
+  List.map (fun c -> skip n (Array.of_list c)) l |> List.flatten
 
 let order l =
   match List.map List.length l with
@@ -42,28 +42,7 @@ let disjoint l =
   in
   f (List.flatten l |> List.sort compare)
 
-let of_array a =
-  let visited = Array.make (Array.length a) false in
-  let rec walk first cycle current =
-    if current = first then
-      List.rev cycle
-    else (
-      visited.(current) <- true;
-      walk first (current :: cycle) a.(current)
-    )
-  in
-  let rec f acc i =
-    if i = Array.length a then
-      List.rev acc
-    else if visited.(i) then
-      (* already in a previous cycle... *)
-      f acc (i + 1)
-    else
-      match walk i [i] a.(i) with
-      | [_] -> f acc (i + 1) (* useless *)
-      | c -> f (c :: acc) (i + 1)
-  in
-  f [] 0
+let of_array a = skip 0 a
 
 let to_array n l =
   let a = Array.init n (fun i -> i) in
